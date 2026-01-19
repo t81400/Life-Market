@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>人生超市 - 會員卡生成器</title>
+    <style>
+        :root {
+            --market-bg: rgb(217, 131, 164);
+            --brand-red: rgb(203, 19, 45);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: -apple-system, sans-serif;
+        }
+
+        .app-sandbox {
+            position: relative;
+            height: 90vh;
+            aspect-ratio: 9 / 16;
+            background-color: var(--market-bg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .layer-visual,
+        .layer-interactive,
+        .layer-overlay {
+            position: absolute;
+            inset: 0;
+        }
+
+        img {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .marquee-banner {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            line-height: 32px;
+            background-color: var(--brand-red);
+            color: white;
+            font-weight: 900;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .marquee-content {
+            display: flex;
+            width: max-content;
+            animation: marquee-run 20s linear infinite;
+        }
+
+        @keyframes marquee-run {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .top-green-banner {
+            top: 31px;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .thanks-banner {
+            top: 8%;
+            right: -3.7%;
+            width: 103%;
+            z-index: 3;
+        }
+
+        .cashier-sticker {
+            top: 6.8%;
+            left: 1%;
+            width: 33%;
+            z-index: 25;
+            transform: rotate(-1deg);
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        .main-title-img {
+            top: 26.75%;
+            left: 51.5%;
+            transform: translateX(-50%);
+            width: 90%;
+            z-index: 5;
+        }
+
+        .membership-card-bg {
+            top: 44%;
+            left: 50.75%;
+            transform: translateX(-50%);
+            width: 85%;
+            z-index: 6;
+        }
+
+        .sale-2025-sticker {
+            top: 68.3%;
+            left: 28.5%;
+            width: 33%;
+            z-index: 30;
+            transform: rotate(-4deg);
+        }
+
+        .receipt-paper {
+            bottom: 5%;
+            left: -8%;
+            width: 45%;
+            z-index: 30;
+        }
+
+        .resignation-card {
+            bottom: 6.8%;
+            left: 26.5%;
+            width: 33.5%;
+            z-index: 12;
+        }
+
+        .hot-item-tag {
+            bottom: 11%;
+            right: 2%;
+            width: 40%;
+            z-index: 10;
+        }
+
+        .checkout-btn {
+            position: absolute;
+            bottom: 6%;
+            right: 5%;
+            width: 28%;
+            z-index: 50;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.1s;
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* 修正照片框層級，讓它低於 30 (明細與貼紙) */
+        .upload-container {
+            position: absolute;
+            top: 54.5%;
+            left: 14.2%;
+            width: 23%;
+            aspect-ratio: 3 / 4;
+            z-index: 7;
+        }
+
+        .upload-zone {
+            width: 100%;
+            height: 100%;
+            border: 1px dashed rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+        }
+
+        #preview-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 8;
+            display: none;
+            pointer-events: none;
+        }
+
+        .btn-cancel {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background: #ff4d4f;
+            color: white;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-tip {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .name-input-container {
+            position: absolute;
+            top: 60%;
+            left: 41%;
+            display: flex;
+            align-items: baseline;
+            z-index: 20;
+        }
+
+        .name-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .name-field {
+            width: 75px;
+            background: transparent;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            color: #000;
+            outline: none;
+            margin-left: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-sandbox">
+        <div class="layer-visual">
+            <img src="Vector 1.png" class="top-green-banner">
+            <img src="謝謝光臨橫幅.png" class="thanks-banner">
+            <img src="請支援收銀.png" class="cashier-sticker">
+            <img src="大標題.png" class="main-title-img">
+            <img src="好多事會員卡.png" class="membership-card-bg">
+            <img src="離職集點卡.png" class="resignation-card">
+            <img src="交易明細.png" class="receipt-paper">
+            <img src="熱賣商品.png" class="hot-item-tag">
+            <img src="特價中2025.png" class="sale-2025-sticker">
+            <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
+        </div>
+        <div class="layer-interactive">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <div class="upload-container">
+                <div class="btn-cancel" id="btn-cancel">×</div>
+                <div class="upload-zone" id="upload-zone">
+                    <span class="upload-tip" id="upload-text">照片</span>
+                    <img id="preview-img">
+                </div>
+            </div>
+            <div class="name-input-container">
+                <span class="name-label">會員姓名：</span>
+                <input type="text" id="member-name" class="name-field">
+            </div>
+        </div>
+        <div class="layer-overlay">
+            <div class="marquee-banner" style="top: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+            <div class="marquee-banner" style="bottom: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        const uploadText = document.getElementById('upload-text');
+        const uploadZone = document.getElementById('upload-zone');
+        const btnCancel = document.getElementById('btn-cancel');
+        const btnCheckout = document.getElementById('btn-checkout');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    previewImg.src = event.target.result;
+                    previewImg.style.display = 'block';
+                    uploadText.style.display = 'none';
+                    uploadZone.style.border = 'none';
+                    btnCancel.style.display = 'flex';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        btnCancel.addEventListener('click', (e) => {
+            e.stopPropagation();
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+            uploadText.style.display = 'block';
+            uploadZone.style.border = '1px dashed rgba(0,0,0,0.3)';
+            btnCancel.style.display = 'none';
+            fileInput.value = '';
+        });
+        btnCheckout.addEventListener('click', () => {
+            const name = document.getElementById('member-name').value;
+            if (!name) { alert('請先輸入會員姓名'); return; }
+            window.location.href = 'checkout.html';
+        });
+    </script>
+</body>
+
+</html>
