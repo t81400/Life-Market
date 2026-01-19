@@ -27,6 +27,8 @@ body {
     background-color: var(--market-bg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     overflow: hidden;
+    /* Performance: Isolate layout containment */
+    contain: content;
 }
 
 .layer-visual,
@@ -58,6 +60,8 @@ img {
     display: flex;
     width: max-content;
     animation: marquee-run 20s linear infinite;
+    /* Performance: Hint to compositor */
+    will-change: transform;
 }
 
 @keyframes marquee-run {
@@ -187,9 +191,12 @@ img {
     border-radius: 0;
 }
 
-/* 縮放桿位置 */
-
-/* btn-cancel removed */
+/* Croppie 容器：讓它填滿上傳框 */
+#cropper-container {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
 
 .upload-tip {
     font-size: 14px;
