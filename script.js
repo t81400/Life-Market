@@ -8,10 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
     const uploadText = document.getElementById('upload-text');
     const uploadZone = document.getElementById('upload-zone');
-    const btnCancel = document.getElementById('btn-cancel');
     const btnCheckout = document.getElementById('btn-checkout');
     const memberNameInput = document.getElementById('member-name');
     const cropperContainer = document.getElementById('cropper-container');
+
+    // Action Sheet Elements
+    const actionSheet = document.getElementById('action-sheet-overlay');
+    const btnChangePhoto = document.getElementById('btn-change-photo');
+    const btnRemovePhoto = document.getElementById('btn-remove-photo');
+    const btnCancelSheet = document.getElementById('btn-cancel-sheet');
 
     // State
     let cropperInstance = null;
@@ -26,18 +31,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     uploadZone.addEventListener('click', () => {
-        // Only open file dialog if we don't already have an active cropper (or if user wants to change)
-        // User logic says: if (!cropperInstance) fileInput.click();
-        if (!cropperInstance) fileInput.click();
+        if (cropperInstance) {
+            // Already have a photo -> Show Action Sheet
+            actionSheet.style.display = 'flex';
+        } else {
+            // No photo -> Open File Dialog directly
+            fileInput.click();
+        }
+    });
+
+    // Action Sheet: Change Photo
+    btnChangePhoto.addEventListener('click', () => {
+        closeActionSheet();
+        fileInput.click();
+    });
+
+    // Action Sheet: Remove Photo
+    btnRemovePhoto.addEventListener('click', () => {
+        closeActionSheet();
+        handleCancelUpload(); // Reset logic
+    });
+
+    // Action Sheet: Cancel
+    btnCancelSheet.addEventListener('click', closeActionSheet);
+
+    // Close when clicking overlay background
+    actionSheet.addEventListener('click', (e) => {
+        if (e.target === actionSheet) closeActionSheet();
     });
 
     fileInput.addEventListener('change', handleFileSelect);
 
-    btnCancel.addEventListener('click', handleCancelUpload);
-
     btnCheckout.addEventListener('click', handleCheckout);
 
     memberNameInput.addEventListener('input', handleNameInput);
+
+    /**
+     * Closes the Action Sheet
+     */
+    function closeActionSheet() {
+        actionSheet.style.display = 'none';
+    }
 
     /**
      * Initializes state from localStorage
@@ -57,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cropperInstance) cropperInstance.destroy();
 
         cropperInstance = new Croppie(cropperContainer, {
-            viewport: { width: 80, height: 105, type: 'square' }, // Matches aspect ratio ~3:4
+            viewport: { width: 80, height: 105, type: 'square' },
             boundary: { width: 80, height: 105 },
             showZoomer: true,
             enableOrientation: true
@@ -93,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadText.style.display = 'none';
             uploadZone.style.border = 'none';
             cropperContainer.style.display = 'block';
-            btnCancel.style.display = 'flex';
+            // btnCancel removed in favor of Action Sheet
 
             // Init Croppie
             initCroppie(event.target.result);
@@ -102,11 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Resets upload state
-     * @param {Event} e 
+     * Resets upload state (Used by Remove Photo)
      */
-    function handleCancelUpload(e) {
-        e.stopPropagation(); // Prevent triggering uploadZone click
+    function handleCancelUpload() {
+        // Prevent event bubbling handled by caller logic if needed, 
+        // but here it's called programmatically so no event object needed usually.
 
         if (cropperInstance) {
             cropperInstance.destroy();
@@ -116,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cropperContainer.style.display = 'none';
         uploadText.style.display = 'block';
         uploadZone.style.border = '1px dashed rgba(0,0,0,0.3)';
-        btnCancel.style.display = 'none';
 
         fileInput.value = '';
     }
@@ -154,15 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cropperInstance) {
             cropperInstance.result({
                 type: 'base64',
-                size: 'viewport', // Get image sized to viewport (80x105) for consistency
-                format: 'png' // or jpeg
+                size: 'viewport',
+                format: 'png'
             }).then(base64 => {
                 localStorage.setItem(LOCAL_STORAGE_KEY_IMAGE, base64);
                 window.location.href = 'checkout.html';
             });
         } else {
-            // No image uploaded is apparently allowed (or maybe we should block? 
-            // Following user's code logic: just go to checkout if name exists)
             window.location.href = 'checkout.html';
         }
     }
