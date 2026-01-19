@@ -40,9 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadText.style.display = 'none';
                 uploadZone.style.border = 'none';
                 cropperContainer.style.display = 'block';
-                // 移除 btnCancel.style.display = 'flex'
                 initCroppie(event.target.result);
             }
+            // Error Handling: Handle file reading errors
+            reader.onerror = (error) => {
+                console.error("File reading failed:", error);
+                alert("圖片讀取失敗，請重試 (Failed to read file)");
+            };
             reader.readAsDataURL(file);
         }
     });
@@ -53,9 +57,22 @@ document.addEventListener('DOMContentLoaded', () => {
         memberNameInput.value = savedName;
     }
 
+    // Performance: Debounce function to limit LocalStorage writes
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    const saveName = debounce((value) => {
+        localStorage.setItem('life_market_member_name', value);
+    }, 300);
+
     // Input Persistence
     memberNameInput.addEventListener('input', (e) => {
-        localStorage.setItem('life_market_member_name', e.target.value);
+        saveName(e.target.value);
     });
 
     // 結帳邏輯保留
