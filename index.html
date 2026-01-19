@@ -8,11 +8,12 @@
 
     <!-- Security: Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+        content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:;">
 
     <title>人生超市 - 會員卡生成器</title>
 
     <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -40,7 +41,7 @@
             <div class="upload-container">
                 <div class="btn-cancel" id="btn-cancel" aria-label="Cancel Upload">×</div>
                 <div class="upload-zone" id="upload-zone" role="button" aria-label="Upload Photo">
-                    <span class="upload-tip" id="upload-text">點擊照片</span>
+                    <span class="upload-tip" id="upload-text">照片</span>
                     <div id="cropper-container"></div>
                 </div>
             </div>
