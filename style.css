@@ -190,30 +190,40 @@ img {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    overflow: hidden;
-    background: transparent;
-    position: relative;
+    overflow: visible;
+    /* 改為 visible 讓滑桿能跑出來 */
 }
 
 /* Croppie 容器：讓它填滿上傳框 */
 #cropper-container {
-    display: none;
     width: 100%;
     height: 100%;
 }
 
-/* Remove Croppie default border-radius if present */
-.cr-boundary {
-    border-radius: 0;
-}
-
-/* Position the Zoom Slider below the container */
+/* 核心優化：強化滑桿可視度 */
 .cr-slider-wrap {
     position: absolute;
-    bottom: -30px;
-    width: 100%;
-    left: 0;
-    z-index: 60;
+    bottom: -40px;
+    /* 移到照片框下方 */
+    width: 150%;
+    /* 加寬一點方便操作 */
+    left: -25%;
+    /* 置中 */
+    z-index: 200;
+    /* 絕對頂層 */
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cr-slider {
+    cursor: ew-resize;
+}
+
+/* 確保點擊區域乾淨 */
+#upload-text {
+    pointer-events: none;
 }
 
 /* 隱藏原本右上角的紅色 X 按鈕，因為現在整合進 Action Sheet 了 */
@@ -225,70 +235,6 @@ img {
     font-size: 14px;
     color: #000;
     font-weight: bold;
-}
-
-/* Action Sheet 遮罩 */
-.action-sheet-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: none;
-    /* 預設隱藏 */
-    align-items: flex-end;
-    justify-content: center;
-    transition: opacity 0.3s;
-}
-
-/* Action Sheet 本體 */
-.action-sheet {
-    width: 95%;
-    max-width: 400px;
-    margin-bottom: 20px;
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-.action-sheet-group {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-radius: 13px;
-    margin-top: 8px;
-    overflow: hidden;
-}
-
-.action-sheet button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    background: transparent;
-    font-size: 18px;
-    color: #007aff;
-    /* iOS 藍 */
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-
-.action-sheet button:last-child {
-    border-bottom: none;
-}
-
-.action-sheet button.text-danger {
-    color: #ff3b30;
-    /* iOS 紅 */
-}
-
-.action-sheet button:active {
-    background: rgba(0, 0, 0, 0.05);
 }
 
 .name-input-container {
