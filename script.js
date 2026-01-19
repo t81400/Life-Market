@@ -6,29 +6,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
     const uploadZone = document.getElementById('upload-zone');
     const uploadText = document.getElementById('upload-text');
-    const btnCancel = document.getElementById('btn-cancel');
     const cropperContainer = document.getElementById('cropper-container');
     const btnCheckout = document.getElementById('btn-checkout');
     const memberNameInput = document.getElementById('member-name');
 
     let cropperInstance = null;
 
-    // 初始化 Croppie
+    // 點擊文字改為「照片」
+    uploadText.textContent = "照片";
+
+    // 無論何時點擊照片區域，都觸發選擇檔案
+    uploadZone.addEventListener('click', () => fileInput.click());
+
     function initCroppie(src) {
         if (cropperInstance) cropperInstance.destroy();
 
         cropperInstance = new Croppie(cropperContainer, {
-            viewport: { width: 80, height: 105, type: 'square' }, // 配合你的 3:4 比例
+            viewport: { width: 80, height: 105, type: 'square' },
             boundary: { width: 80, height: 105 },
-            showZoomer: true,
-            enableOrientation: true
+            showZoomer: false,        // 隱藏滑桿
+            enableOrientation: true,
+            mouseWheelZoom: true,     // 支援滑鼠滾輪縮放
+            enableZoom: true          // 確保支援手指捏合縮放 (Pinch to Zoom)
         });
         cropperInstance.bind({ url: src });
     }
-
-    uploadZone.addEventListener('click', () => {
-        if (!cropperInstance) fileInput.click();
-    });
 
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -38,24 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadText.style.display = 'none';
                 uploadZone.style.border = 'none';
                 cropperContainer.style.display = 'block';
-                btnCancel.style.display = 'flex';
+                // 移除 btnCancel.style.display = 'flex'
                 initCroppie(event.target.result);
             }
             reader.readAsDataURL(file);
         }
-    });
-
-    btnCancel.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (cropperInstance) {
-            cropperInstance.destroy();
-            cropperInstance = null;
-        }
-        cropperContainer.style.display = 'none';
-        uploadText.style.display = 'block';
-        uploadZone.style.border = '1px dashed rgba(0,0,0,0.3)';
-        btnCancel.style.display = 'none';
-        fileInput.value = '';
     });
 
     // Initialize Name from LocalStorage if exists
@@ -69,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('life_market_member_name', e.target.value);
     });
 
+    // 結帳邏輯保留
     btnCheckout.addEventListener('click', () => {
         const name = memberNameInput.value.trim();
         if (!name) { alert('請先輸入會員姓名'); return; }
@@ -80,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'checkout.html';
             });
         } else {
+            localStorage.setItem('life_market_member_name', name);
             window.location.href = 'checkout.html';
         }
     });
