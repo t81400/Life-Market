@@ -1,37 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>人生超市 - 會員卡生成</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- Security: Content Security Policy (Strict) -->
+    <!-- Allow cdnjs, self; Disallow object/frame injection -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
+
+    <!-- Performance: Preconnect to CDN -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <title>人生超市 - 會員卡生成器 (照片調整增強版)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="app-sandbox">
         <div class="layer-visual">
+            <img src="Vector 1.png" class="top-green-banner">
+            <img src="謝謝光臨橫幅.png" class="thanks-banner">
+            <img src="請支援收銀.png" class="cashier-sticker">
+            <img src="大標題.png" class="main-title-img">
             <img src="會員卡.png" class="membership-card-bg">
+            <img src="離職集點卡.png" class="resignation-card">
+            <img src="交易明細.png" class="receipt-paper">
+            <img src="熱賣商品.png" class="hot-item-tag">
+            <img src="特價中2025.png" class="sale-2025-sticker">
             <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
         </div>
-
         <div class="layer-interactive">
             <input type="file" id="file-input" accept="image/*" style="display: none;">
-            
-            <div class="upload-container" id="upload-zone">
-                <span id="upload-hint">點擊<br>照片</span>
-                <div id="cropper-container"></div>
+            <div class="upload-container">
+                <div class="upload-zone" id="upload-zone">
+                    <span class="upload-tip" id="upload-text">照片</span>
+                    <div id="cropper-container"></div>
+                </div>
             </div>
-
             <div class="name-input-container">
-                <input type="text" id="member-name" class="name-field" placeholder="點擊輸入姓名" maxlength="10">
+                <span class="name-label">會員姓名：</span>
+                <input type="text" id="member-name" class="name-field">
             </div>
         </div>
 
-        <img id="final-card-img" style="position:absolute; inset:0; width:100%; height:100%; z-index:100; display:none;">
-        <canvas id="cardCanvas" style="display: none;"></canvas>
+        <div class="layer-overlay">
+            <div class="marquee-banner" style="top: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+            <div class="marquee-banner" style="bottom: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
