@@ -142,6 +142,71 @@ img {
     z-index: 10;
 }
 
+/* 基礎樣式保留，新增以下內容 */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.upload-container-modal {
+    width: 150px;
+    height: 200px;
+    margin: 0 auto 15px;
+    position: relative;
+    background: #f9f9f9;
+    overflow: hidden;
+}
+
+#cropper-container {
+    width: 100%;
+    height: 100%;
+}
+
+.name-field-modal {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.btn-confirm {
+    background: #cb132d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.btn-cancel {
+    background: #eee;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
 .checkout-btn {
     position: absolute;
     bottom: 6%;
@@ -150,84 +215,4 @@ img {
     z-index: 50;
     cursor: pointer;
     pointer-events: auto;
-    transition: transform 0.1s;
-}
-
-.checkout-btn:active {
-    transform: scale(0.92);
-}
-
-/* 照片上傳與調整區域 */
-.upload-container {
-    position: absolute;
-    top: 54.5%;
-    left: 14.2%;
-    width: 23%;
-    aspect-ratio: 3 / 4;
-    z-index: 7;
-    padding: 0;
-    margin: 0;
-}
-
-.upload-zone {
-    width: 100%;
-    height: 100%;
-    border: 1px dashed rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    overflow: hidden;
-    /* 確保 Croppie 內容不溢出 */
-    background: transparent;
-    position: relative;
-}
-
-/* 徹底隱藏 Croppie 的滑桿區域 */
-.cr-slider-wrap {
-    display: none !important;
-}
-
-/* 確保 Croppie 的邊界不影響視覺 */
-.cr-boundary {
-    border-radius: 0;
-}
-
-/* Croppie 容器：讓它填滿上傳框 */
-#cropper-container {
-    display: none;
-    width: 100%;
-    height: 100%;
-}
-
-.upload-tip {
-    font-size: 14px;
-    color: #000;
-    font-weight: bold;
-}
-
-.name-input-container {
-    position: absolute;
-    top: 60%;
-    left: 41%;
-    display: flex;
-    align-items: baseline;
-    z-index: 20;
-}
-
-.name-label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #000;
-}
-
-.name-field {
-    width: 75px;
-    background: transparent;
-    border: none;
-    font-size: 13px;
-    font-weight: bold;
-    color: #000;
-    outline: none;
-    margin-left: 2px;
 }
