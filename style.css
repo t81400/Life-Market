@@ -1,340 +1,40 @@
-:root {
-    --market-bg: rgb(217, 131, 164);
-    --brand-red: rgb(203, 19, 45);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    background-color: #1a1a1a;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    font-family: -apple-system, sans-serif;
-}
+:root { --market-bg: rgb(217, 131, 164); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a1a; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; font-family: sans-serif; }
 
 .app-sandbox {
-    position: relative;
-    height: 90vh;
-    aspect-ratio: 9 / 16;
-    background-color: var(--market-bg);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    overflow: hidden;
-    /* Performance: Isolate layout containment */
-    contain: content;
+    position: relative; height: 90vh; aspect-ratio: 9 / 16;
+    background-color: var(--market-bg); box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 }
 
-.layer-visual,
-.layer-interactive,
-.layer-overlay {
-    position: absolute;
-    inset: 0;
-}
+.layer-visual, .layer-interactive { position: absolute; inset: 0; }
 
-img {
-    position: absolute;
-    pointer-events: none;
-}
+.membership-card-bg { width: 100%; height: auto; position: absolute; top: 15%; left: 0; pointer-events: none; }
+.checkout-btn { position: absolute; bottom: 8%; right: 5%; width: 30%; cursor: pointer; z-index: 50; }
 
-.marquee-banner {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
-    background-color: var(--brand-red);
-    color: white;
-    font-weight: 900;
-    overflow: hidden;
-    z-index: 100;
-}
-
-.marquee-content {
-    display: flex;
-    width: max-content;
-    animation: marquee-run 20s linear infinite;
-    /* Performance: Hint to compositor */
-    will-change: transform;
-}
-
-@keyframes marquee-run {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-/* 視覺元件層級 */
-.top-green-banner {
-    top: 31px;
-    width: 100%;
-    z-index: 2;
-}
-
-.thanks-banner {
-    top: 8%;
-    right: -3.7%;
-    width: 103%;
-    z-index: 3;
-}
-
-.cashier-sticker {
-    top: 6.8%;
-    left: 1%;
-    width: 33%;
-    z-index: 25;
-    transform: rotate(-1deg);
-    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
-}
-
-.main-title-img {
-    top: 26.75%;
-    left: 51.5%;
-    transform: translateX(-50%);
-    width: 90%;
-    z-index: 5;
-}
-
-.membership-card-bg {
-    top: 44%;
-    left: 50.75%;
-    transform: translateX(-50%);
-    width: 85%;
-    z-index: 6;
-}
-
-.sale-2025-sticker {
-    top: 68.3%;
-    left: 28.5%;
-    width: 33%;
-    z-index: 30;
-    transform: rotate(-4deg);
-}
-
-.receipt-paper {
-    bottom: 5%;
-    left: -8%;
-    width: 45%;
-    z-index: 30;
-}
-
-.resignation-card {
-    bottom: 6.8%;
-    left: 26.5%;
-    width: 33.5%;
-    z-index: 12;
-}
-
-.hot-item-tag {
-    bottom: 11%;
-    right: 2%;
-    width: 40%;
-    z-index: 10;
-}
-
-.checkout-btn {
-    position: absolute;
-    bottom: 6%;
-    right: 5%;
-    width: 28%;
-    z-index: 50;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: transform 0.1s;
-}
-
-.checkout-btn:active {
-    transform: scale(0.92);
-}
-
-/* 照片上傳與調整區域 */
+/* 照片上傳區：貼合卡片照片框 */
 .upload-container {
     position: absolute;
-    top: 54.5%;
-    left: 14.2%;
-    width: 23%;
-    aspect-ratio: 3 / 4;
-    z-index: 7;
-    padding: 0;
-    margin: 0;
+    top: 54.5%; left: 14.2%; /* 根據你的原始設計座標 */
+    width: 23%; aspect-ratio: 3 / 4;
+    border: 1px dashed rgba(0,0,0,0.3);
+    z-index: 10; cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
 }
+#upload-hint { font-size: 12px; color: #666; text-align: center; }
 
-.upload-zone {
-    width: 100%;
-    height: 100%;
-    border: 1px dashed rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    overflow: hidden;
-    /* 確保 Croppie 內容不溢出 */
-    background: transparent;
-    position: relative;
-}
-
-/* 徹底隱藏 Croppie 的滑桿區域 */
-.cr-slider-wrap {
-    display: none !important;
-}
-
-/* 確保 Croppie 的邊界不影響視覺 */
-.cr-boundary {
-    border-radius: 0;
-}
-
-/* Croppie 容器：讓它填滿上傳框 */
-#cropper-container {
-    display: none;
-    width: 100%;
-    height: 100%;
-}
-
-.upload-tip {
-    font-size: 14px;
-    color: #000;
-    font-weight: bold;
-}
-
+/* 姓名輸入區：貼合卡片紅線 */
 .name-input-container {
     position: absolute;
-    top: 60%;
-    left: 41%;
-    display: flex;
-    align-items: baseline;
-    z-index: 20;
+    top: 61.5%; left: 45%;
+    width: 40%;
 }
-
-.name-label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #000;
-}
-
 .name-field {
-    width: 75px;
-    background: transparent;
-    border: none;
-    font-size: 13px;
-    font-weight: bold;
-    color: #000;
-    outline: none;
-    margin-left: 2px;
+    width: 100%; background: transparent; border: none;
+    font-size: 18px; font-weight: bold; outline: none;
 }
 
-/* Update: Modal & Edit Styles */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Basic fade transition */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.modal-content {
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-}
-
-/* Override existing .upload-container for Modal Context */
-.upload-container.modal-upload-style {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 250px;
-    aspect-ratio: 3 / 4;
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    margin-bottom: 24px;
-}
-
-.modal-upload-style .upload-zone {
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-.modal-upload-style .upload-tip {
-    color: white;
-}
-
-/* Override name input for Modal Context */
-.name-input-container.modal-input-style {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.modal-input-style .name-label {
-    color: white;
-    font-size: 16px;
-}
-
-.modal-input-style .name-field {
-    width: 120px;
-    color: white;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-    font-size: 16px;
-    text-align: center;
-    margin-left: 8px;
-}
-
-.modal-input-style .name-field::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Action Buttons */
-.action-btn {
-    padding: 10px 30px;
-    border-radius: 30px;
-    border: none;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
-}
-
-.action-btn:active {
-    transform: scale(0.95);
-}
-
-.action-btn.cancel {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-.action-btn.confirm {
-    background: var(--brand-red);
-    color: white;
-    box-shadow: 0 4px 12px rgba(203, 19, 45, 0.4);
-}
+/* Croppie 調整：填滿框框且隱藏滑桿 */
+#cropper-container { width: 100%; height: 100%; display: none; }
+.cr-slider-wrap { display: none !important; }
+.cr-boundary { border-radius: 0; }
