@@ -5,60 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-    <!-- Security: Content Security Policy (Strict) -->
-    <!-- Allow cdnjs, self; Disallow object/frame injection -->
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
-
-    <!-- Performance: Preconnect to CDN -->
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <title>人生超市 - 會員卡生成器 (照片調整增強版)</title>
+    <title>人生超市 - 會員卡生成器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="app-sandbox">
-        <div class="layer-visual">
-            <img src="Vector 1.png" class="top-green-banner">
-            <img src="謝謝光臨橫幅.png" class="thanks-banner">
-            <img src="請支援收銀.png" class="cashier-sticker">
-            <img src="大標題.png" class="main-title-img">
-            <img src="會員卡.png" class="membership-card-bg">
-            <img src="離職集點卡.png" class="resignation-card">
-            <img src="交易明細.png" class="receipt-paper">
-            <img src="熱賣商品.png" class="hot-item-tag">
-            <img src="特價中2025.png" class="sale-2025-sticker">
-            <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
-        </div>
-        <div class="layer-interactive">
-            <input type="file" id="file-input" accept="image/*" style="display: none;">
-            <div class="upload-container">
-                <div class="upload-zone" id="upload-zone">
-                    <span class="upload-tip" id="upload-text">照片</span>
+    <main class="app-sandbox">
+        <section class="layer-visual">
+            <img src="會員卡.png" class="membership-card-bg" id="main-card-bg">
+            <div id="final-result-display" style="position: absolute; inset: 0; z-index: 60; display: none;">
+                <img id="final-card-img" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <img src="開始結帳.png" class="checkout-btn" id="btn-start-edit">
+        </section>
+
+        <div id="edit-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h3 style="margin-bottom:15px;">製作會員卡</h3>
+                <div class="upload-container-modal">
                     <div id="cropper-container"></div>
+                    <input type="file" id="file-input" accept="image/*" style="display: none;">
+                    <div id="modal-upload-trigger" style="cursor:pointer; border:1px dashed #ccc; padding:20px;">點擊選擇照片
+                    </div>
+                </div>
+                <input type="text" id="member-name" placeholder="請輸入會員姓名" class="name-field-modal">
+                <div class="modal-btns">
+                    <button id="btn-generate" class="btn-confirm">確認製作並下載</button>
+                    <button id="btn-close-modal" class="btn-cancel">取消</button>
                 </div>
             </div>
-            <div class="name-input-container">
-                <span class="name-label">會員姓名：</span>
-                <input type="text" id="member-name" class="name-field">
-            </div>
         </div>
-
-        <div class="layer-overlay">
-            <div class="marquee-banner" style="top: 0;">
-                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
-                        SALE • SALE • SALE • SALE • </span></div>
-            </div>
-            <div class="marquee-banner" style="bottom: 0;">
-                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
-                        SALE • SALE • SALE • SALE • </span></div>
-            </div>
-        </div>
-    </div>
-
+        <canvas id="cardCanvas" style="display: none;"></canvas>
+    </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="script.js"></script>
 </body>
