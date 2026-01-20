@@ -3,75 +3,85 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Life Supermarket - 人生超市</title>
-    <!-- Cache Buster v=5 -->
-    <script type="text/javascript" nonce="9355bd3a7927499c9cf084f0a8d" src="//local.adguard.org?ts=1768928596190&amp;type=content-script&amp;dmn=contribution.usercontent.google.com&amp;url=https%3A%2F%2Fcontribution.usercontent.google.com%2Fdownload%3Fc%3DCgxiYXJkX3N0b3JhZ2USTxIMcmVxdWVzdF9kYXRhGj8KMGY5YzYzNTBmN2QyNDBiN2UwMDA2NDhkMThhY2M0MjIyMDE1NjgxOTA5MDExMmJjYxILEgcQ9qLj8coOGAE%26filename%3Dindex.html%26opi%3D103135050&amp;app=com.apple.Safari&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9355bd3a7927499c9cf084f0a8d" src="//local.adguard.org?ts=1768928596190&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="style.css?v=5">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- Security: Content Security Policy (Strict) -->
+    <!-- Allow cdnjs, self; Disallow object/frame injection -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
+
+    <!-- Performance: Preconnect to CDN -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <title>人生超市 - 會員卡生成器 (照片調整增強版)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="app">
-        <!-- Reset Button (Dev Tool) -->
-        <button id="btn-reset" class="btn-reset">↺ 重做</button>
+    <div class="app-sandbox">
+        <div class="layer-visual">
+            <img src="Vector 1.png" class="top-green-banner">
+            <img src="謝謝光臨橫幅.png" class="thanks-banner">
+            <img src="請支援收銀.png" class="cashier-sticker">
+            <img src="大標題.png" class="main-title-img">
+            <img src="會員卡.png" class="membership-card-bg">
+            <!-- New: Final Result Display -->
+            <img id="final-result-display"
+                style="display: none; position: absolute; z-index: 100; top: 44%; left: 50.75%; transform: translateX(-50%); width: 85%; pointer-events: auto;"
+                alt="您的會員卡">
 
-        <!-- Stage Background (Z: 0) -->
-        <img src="./assets/bg-base.png" class="bg-base" alt="Background">
-
-        <!-- Decor Back (Z: 10) -->
-        <img src="./assets/logo-main.png" class="logo-main" alt="Logo">
-        <img src="./assets/decor-top.png" class="decor-top" alt="Ribbon">
-        <img src="./assets/decor-top2.png" class="decor-top2" alt="Burst">
-
-        <!-- The Card Display Area (Z: 20) -->
-        <div id="card-display-container" class="card-display-container">
-            <div id="photo-zone"></div>
-            <img src="./assets/card-frame.png" class="card-frame" id="main-card-visual" alt="Member Card">
+            <img src="離職集點卡.png" class="resignation-card">
+            <img src="交易明細.png" class="receipt-paper">
+            <img src="熱賣商品.png" class="hot-item-tag">
+            <img src="特價中2025.png" class="sale-2025-sticker">
+            <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
+        </div>
+        <div class="layer-interactive">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <!-- Controls moved to Modal -->
         </div>
 
-        <!-- Decor Front (Z: 35/40) -->
-        <img src="./assets/decor-receipt.png" class="decor-receipt" alt="Receipt">
-        <img src="./assets/decor-card.png" class="decor-card" alt="Decor Card">
-        <img src="./assets/decor-price2.png" class="decor-price2" alt="Price Tag">
-
-        <!-- Overlapping Card Items (Z: 35) -->
-        <img src="./assets/decor-price1.png" class="decor-price1" alt="Price 2025">
-
-        <!-- Button (Z: 50) -->
-        <img src="./assets/btn-start.png" class="btn-start" id="btn-start" alt="Start Button">
-
-        <!-- Canvas for generation (Hidden) -->
-        <canvas id="cardCanvas" style="display: none;"></canvas>
+        <div class="layer-overlay">
+            <div class="marquee-banner" style="top: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+            <div class="marquee-banner" style="bottom: 0;">
+                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
+                        SALE • SALE • SALE • SALE • </span></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Edit Modal (Overlay) -->
-    <div id="edit-modal" class="modal hidden">
+    <!-- New: Edit Modal -->
+    <div id="edit-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <h2 class="modal-title">製作你的會員卡</h2>
-            <div class="modal-card-wrapper">
-                <img src="./assets/card-frame.png" class="modal-card-bg" alt="Card Frame">
+            <h3 style="color: white; margin-bottom: 20px; font-weight: 900; letter-spacing: 1px;">客製您的會員卡</h3>
 
-                <!-- Inputs Area -->
-                <div class="modal-inputs">
-                    <!-- Photo Input Area -->
-                    <div class="input-group photo-group">
-                        <div id="photo-preview" class="photo-preview"></div>
-                        <input type="file" id="photo-input" accept="image/*" class="invisible-input">
-                        <div class="photo-hint">點擊上傳照片</div>
-                    </div>
-
-                    <!-- Name Input Area -->
-                    <div class="input-group name-group">
-                        <input type="text" id="name-input" placeholder="輸入名字" maxlength="8">
-                    </div>
+            <div class="upload-container modal-upload-style">
+                <div class="upload-zone" id="upload-zone">
+                    <span class="upload-tip" id="upload-text">上傳照片</span>
+                    <div id="cropper-container"></div>
                 </div>
             </div>
 
-            <button id="btn-confirm" class="btn-confirm">確認製作 (Done)</button>
-            <button id="btn-cancel" class="btn-cancel">取消</button>
+            <div class="name-input-container modal-input-style">
+                <span class="name-label" style="color: white;">會員姓名：</span>
+                <input type="text" id="member-name" class="name-field"
+                    style="color: white; border-bottom: 1px solid white;">
+            </div>
+
+            <div class="modal-actions" style="margin-top: 30px; display: flex; gap: 20px;">
+                <button id="btn-cancel" class="action-btn cancel">取消</button>
+                <button id="btn-confirm" class="action-btn confirm">確認製作</button>
+            </div>
         </div>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
