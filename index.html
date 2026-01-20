@@ -3,43 +3,75 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>人生超市 - 會員卡生成器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Life Supermarket - 人生超市</title>
+    <!-- Cache Buster v=5 -->
+    <script type="text/javascript" nonce="9355bd3a7927499c9cf084f0a8d" src="//local.adguard.org?ts=1768928596190&amp;type=content-script&amp;dmn=contribution.usercontent.google.com&amp;url=https%3A%2F%2Fcontribution.usercontent.google.com%2Fdownload%3Fc%3DCgxiYXJkX3N0b3JhZ2USTxIMcmVxdWVzdF9kYXRhGj8KMGY5YzYzNTBmN2QyNDBiN2UwMDA2NDhkMThhY2M0MjIyMDE1NjgxOTA5MDExMmJjYxILEgcQ9qLj8coOGAE%26filename%3Dindex.html%26opi%3D103135050&amp;app=com.apple.Safari&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9355bd3a7927499c9cf084f0a8d" src="//local.adguard.org?ts=1768928596190&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
-    <main class="app-sandbox">
-        <section class="layer-visual">
-            <img src="會員卡.png" class="membership-card-bg" id="main-card-bg">
-            <div id="final-result-display" style="position: absolute; inset: 0; z-index: 60; display: none;">
-                <img id="final-card-img" style="width: 100%; height: 100%; object-fit: contain;">
-            </div>
-            <img src="開始結帳.png" class="checkout-btn" id="btn-start-edit">
-        </section>
+    <div id="app">
+        <!-- Reset Button (Dev Tool) -->
+        <button id="btn-reset" class="btn-reset">↺ 重做</button>
 
-        <div id="edit-modal" class="modal-overlay" style="display: none;">
-            <div class="modal-content">
-                <h3 style="margin-bottom:15px;">製作會員卡</h3>
-                <div class="upload-container-modal">
-                    <div id="cropper-container"></div>
-                    <input type="file" id="file-input" accept="image/*" style="display: none;">
-                    <div id="modal-upload-trigger" style="cursor:pointer; border:1px dashed #ccc; padding:20px;">點擊選擇照片
+        <!-- Stage Background (Z: 0) -->
+        <img src="./assets/bg-base.png" class="bg-base" alt="Background">
+
+        <!-- Decor Back (Z: 10) -->
+        <img src="./assets/logo-main.png" class="logo-main" alt="Logo">
+        <img src="./assets/decor-top.png" class="decor-top" alt="Ribbon">
+        <img src="./assets/decor-top2.png" class="decor-top2" alt="Burst">
+
+        <!-- The Card Display Area (Z: 20) -->
+        <div id="card-display-container" class="card-display-container">
+            <div id="photo-zone"></div>
+            <img src="./assets/card-frame.png" class="card-frame" id="main-card-visual" alt="Member Card">
+        </div>
+
+        <!-- Decor Front (Z: 35/40) -->
+        <img src="./assets/decor-receipt.png" class="decor-receipt" alt="Receipt">
+        <img src="./assets/decor-card.png" class="decor-card" alt="Decor Card">
+        <img src="./assets/decor-price2.png" class="decor-price2" alt="Price Tag">
+
+        <!-- Overlapping Card Items (Z: 35) -->
+        <img src="./assets/decor-price1.png" class="decor-price1" alt="Price 2025">
+
+        <!-- Button (Z: 50) -->
+        <img src="./assets/btn-start.png" class="btn-start" id="btn-start" alt="Start Button">
+
+        <!-- Canvas for generation (Hidden) -->
+        <canvas id="cardCanvas" style="display: none;"></canvas>
+    </div>
+
+    <!-- Edit Modal (Overlay) -->
+    <div id="edit-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="modal-title">製作你的會員卡</h2>
+            <div class="modal-card-wrapper">
+                <img src="./assets/card-frame.png" class="modal-card-bg" alt="Card Frame">
+
+                <!-- Inputs Area -->
+                <div class="modal-inputs">
+                    <!-- Photo Input Area -->
+                    <div class="input-group photo-group">
+                        <div id="photo-preview" class="photo-preview"></div>
+                        <input type="file" id="photo-input" accept="image/*" class="invisible-input">
+                        <div class="photo-hint">點擊上傳照片</div>
+                    </div>
+
+                    <!-- Name Input Area -->
+                    <div class="input-group name-group">
+                        <input type="text" id="name-input" placeholder="輸入名字" maxlength="8">
                     </div>
                 </div>
-                <input type="text" id="member-name" placeholder="請輸入會員姓名" class="name-field-modal">
-                <div class="modal-btns">
-                    <button id="btn-generate" class="btn-confirm">確認製作並下載</button>
-                    <button id="btn-close-modal" class="btn-cancel">取消</button>
-                </div>
             </div>
+
+            <button id="btn-confirm" class="btn-confirm">確認製作 (Done)</button>
+            <button id="btn-cancel" class="btn-cancel">取消</button>
         </div>
-        <canvas id="cardCanvas" style="display: none;"></canvas>
-    </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
-    <script src="script.js"></script>
+    </div>
+
+    <script src="script.js?v=3"></script>
 </body>
 
 </html>
