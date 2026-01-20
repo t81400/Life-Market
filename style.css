@@ -1,108 +1,458 @@
+:root {
+    --app-bg: #ffe4e1;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
-body {
-    background: #1a1a1a;
-    height: 100vh;
+body,
+html {
+    width: 100%;
+    height: 100%;
+    background-color: #111;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     overflow: hidden;
 }
 
-.app-sandbox {
+/* 1. Strict 9:16 Layout */
+#app {
     position: relative;
+    width: auto;
     height: 90vh;
     aspect-ratio: 9/16;
-    background: #d983a4;
+    background-color: var(--app-bg);
     overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
-.membership-card-bg {
+@media (max-width: 600px) {
+    #app {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: auto;
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+}
+
+/* 2. Z-Index & Precision Layout Strategy */
+
+/* Level 5: Background */
+.bg-base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 5;
+}
+
+/* Level 10: Top Decor */
+.logo-main {
+    position: absolute;
+    top: 24%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 10;
+    animation: breathe 3s infinite ease-in-out;
+}
+
+.decor-top {
+    position: absolute;
+    top: 10%;
+    right: -1%;
+    width: 69%;
+    transform: rotate(15deg);
+    z-index: 10;
+    animation: float-slow-15 4s infinite ease-in-out;
+}
+
+.decor-top2 {
+    position: absolute;
+    top: 8%;
+    left: 3%;
+    width: 35%;
+    transform: rotate(-10deg);
+    z-index: 10;
+    animation: breathe-rot 3s infinite ease-in-out;
+}
+
+/* Level 20: Card Container */
+#card-display-container,
+.card-container {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    z-index: 20;
+    cursor: pointer;
+    /* Added Floating Animation for Card */
+    animation: float-center 6s infinite ease-in-out;
+}
+
+.card-frame {
+    display: block;
     width: 100%;
     height: auto;
-    position: absolute;
-    top: 15%;
-    left: 0;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
 }
 
-.checkout-btn {
+#photo-zone {
     position: absolute;
-    bottom: 8%;
-    right: 5%;
+    top: 47%;
+    left: 10%;
+    width: 33%;
+    height: 33%;
+    overflow: hidden;
+    z-index: -1;
+    background-color: #eee;
+}
+
+
+/* Level 30: Sticker */
+.decor-price1 {
+    /* $2025 Yellow Sticker */
+    position: absolute;
+    bottom: 22% !important;
+    left: 35% !important;
+    width: 28%;
+    transform: rotate(-12deg) !important;
+    z-index: 35 !important;
+    animation: pop-attention 3s infinite ease-in-out;
+    pointer-events: none;
+}
+
+
+/* Level 40: Bottom Decors */
+.decor-receipt {
+    position: absolute;
+    bottom: 5%;
+    left: -2%;
+    width: 45%;
+    transform: rotate(-10deg);
+    z-index: 40;
+    animation: float-slow-n10 4s infinite ease-in-out;
+}
+
+.decor-card {
+    position: absolute;
+    bottom: 5%;
+    left: 30%;
+    width: 38%;
+    transform: rotate(5deg);
+    z-index: 40;
+    animation: float-delayed-5 5s infinite ease-in-out 1s;
+}
+
+.decor-price2 {
+    /* Green Tag */
+    position: absolute;
+    bottom: 15%;
+    right: 2%;
+    width: 35%;
+    z-index: 40;
+    /* Added consistent float animation */
+    animation: float-slow 4s infinite ease-in-out;
+}
+
+/* Level 50: Button */
+.btn-start {
+    position: absolute;
+    bottom: 7%;
+    right: 2%;
     width: 30%;
-    cursor: pointer;
     z-index: 50;
+    cursor: pointer;
+    animation: slide-hint 1s infinite alternate ease-in-out;
 }
 
-.modal-overlay {
+/* Reset Button */
+.btn-reset {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* Animations */
+
+/* Specific Card Float preserving Centering */
+@keyframes float-center {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-8px);
+    }
+}
+
+@keyframes float-slow {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes float-slow-15 {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(15deg);
+    }
+
+    50% {
+        transform: translateY(-5px) rotate(15deg);
+    }
+}
+
+@keyframes float-slow-n10 {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-10deg);
+    }
+
+    50% {
+        transform: translateY(-5px) rotate(-10deg);
+    }
+}
+
+@keyframes float-delayed-5 {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(-7px) rotate(5deg);
+    }
+}
+
+@keyframes breathe-rot {
+
+    0%,
+    100% {
+        transform: scale(1.0) rotate(-10deg);
+    }
+
+    50% {
+        transform: scale(1.05) rotate(-10deg);
+    }
+}
+
+@keyframes pop-attention {
+
+    0%,
+    100% {
+        transform: rotate(-12deg) scale(1.0);
+    }
+
+    50% {
+        transform: rotate(-7deg) scale(1.1);
+    }
+
+    75% {
+        transform: rotate(-17deg) scale(1.1);
+    }
+}
+
+@keyframes slide-hint {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1.0);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.05);
+    }
+}
+
+
+/* Modal Styles */
+.modal {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    z-index: 1000;
+    z-index: 100;
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 20px;
-    width: 85%;
-    max-width: 320px;
-    text-align: center;
+.modal.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 
-.upload-box {
-    width: 150px;
-    height: 200px;
-    margin: 0 auto 15px;
-    background: #f0f0f0;
-    border: 2px dashed #ccc;
+.modal-content {
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.modal-title {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.modal-card-wrapper {
     position: relative;
-    cursor: pointer;
+    width: 85%;
+    /* Match homepage card width */
+    margin: 0 auto;
+}
+
+.modal-card-bg {
+    width: 100%;
+    display: block;
+}
+
+.modal-inputs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.photo-group {
+    position: absolute !important;
+    top: 42% !important;
+    /* Matches homepage */
+    left: 11% !important;
+    /* Matches homepage */
+    width: 32% !important;
+    /* Matches homepage */
+    aspect-ratio: 1/1;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
-.name-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
-.btn-main {
-    background: #cb132d;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    width: 100%;
-    font-weight: bold;
-    margin-bottom: 8px;
-    cursor: pointer;
-}
-
-.btn-sub {
-    background: #eee;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    width: 100%;
-    cursor: pointer;
-}
-
-#cropper-container {
+.photo-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+.invisible-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.photo-hint {
+    color: #fff;
+    font-size: 0.8rem;
+    z-index: 0;
+    text-align: center;
+}
+
+.name-group {
+    position: absolute !important;
+    top: 55%;
+    left: 50%;
+    /* Adjust to sit right of photo */
+    width: 40%;
+    height: 15%;
+}
+
+#name-input {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-bottom: 2px solid #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: #000;
+}
+
+.btn-confirm {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #aaa;
+    border: none;
+    margin-top: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
 }
