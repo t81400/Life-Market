@@ -1,76 +1,98 @@
+/**
+ * Life Market - Member Card Generator
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
-    let cropperInstance = null;
     const fileInput = document.getElementById('file-input');
     const uploadZone = document.getElementById('upload-zone');
+    const uploadText = document.getElementById('upload-text');
     const cropperContainer = document.getElementById('cropper-container');
-    const uploadHint = document.getElementById('upload-hint');
+    const btnCheckout = document.getElementById('btn-checkout');
+    const memberNameInput = document.getElementById('member-name');
 
-    // 點擊區域觸發上傳
-    uploadZone.onclick = () => fileInput.click();
+    let cropperInstance = null;
 
-    fileInput.onchange = (e) => {
+    // 點擊文字改為「照片」
+    uploadText.textContent = "照片";
+
+    // 無論何時點擊照片區域，都觸發選擇檔案
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    function initCroppie(src) {
+        if (cropperInstance) cropperInstance.destroy();
+
+        // Get the actual size of the container to match perfectly
+        const width = cropperContainer.offsetWidth;
+        const height = cropperContainer.offsetHeight;
+
+        cropperInstance = new Croppie(cropperContainer, {
+            viewport: { width: width, height: height, type: 'square' },
+            boundary: { width: width, height: height },
+            showZoomer: false,        // 隱藏滑桿
+            enableOrientation: true,
+            mouseWheelZoom: true,     // 支援滑鼠滾輪縮放
+            enableZoom: true          // 確保支援手指捏合縮放 (Pinch to Zoom)
+        });
+        cropperInstance.bind({ url: src });
+    }
+
+    fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            uploadHint.style.display = 'none';
-            cropperContainer.style.display = 'block';
-            
-            if (cropperInstance) cropperInstance.destroy();
-            
-            // 初始化 Croppie：這就是你要的自動縮放功能
-            cropperInstance = new Croppie(cropperContainer, {
-                viewport: { width: 80, height: 105, type: 'square' }, // 3:4 比例
-                boundary: { width: 80, height: 105 },
-                showZoomer: false, // 隱藏滑桿，改用手指/滾輪縮放
-                enableOrientation: true,
-                mouseWheelZoom: true
-            });
-            cropperInstance.bind({ url: event.target.result });
-        };
-        reader.readAsDataURL(file);
-    };
-
-    // 結帳合成
-    document.getElementById('btn-checkout').onclick = async () => {
-        const name = document.getElementById('member-name').value;
-        if (!name) { alert('請輸入會員姓名'); return; }
-
-        const canvas = document.getElementById('cardCanvas');
-        const ctx = canvas.getContext('2d');
-        const bgImg = new Image();
-        bgImg.src = '會員卡.png';
-
-        bgImg.onload = async () => {
-            canvas.width = bgImg.width;
-            canvas.height = bgImg.height;
-            ctx.drawImage(bgImg, 0, 0);
-
-            if (cropperInstance) {
-                // 取得裁切後的圖片
-                const photoBase64 = await cropperInstance.result({ type: 'base64', size: 'original' });
-                const photoImg = new Image();
-                photoImg.src = photoBase64;
-                photoImg.onload = () => {
-                    // 繪製照片到畫布的正確位置
-                    ctx.drawImage(photoImg, canvas.width * 0.142, canvas.height * 0.545, canvas.width * 0.23, canvas.width * 0.23 * 1.33);
-                    
-                    // 繪製姓名
-                    ctx.font = "bold 42px Arial";
-                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.635);
-
-                    // 顯示合成圖並下載
-                    const finalData = canvas.toDataURL('image/png');
-                    const display = document.getElementById('final-card-img');
-                    display.src = finalData;
-                    display.style.display = 'block';
-
-                    const link = document.createElement('a');
-                    link.download = 'my-life-card.png';
-                    link.href = finalData;
-                    link.click();
-                };
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                uploadText.style.display = 'none';
+                uploadZone.style.border = 'none';
+                cropperContainer.style.display = 'block';
+                initCroppie(event.target.result);
             }
+            // Error Handling: Handle file reading errors
+            reader.onerror = (error) => {
+                console.error("File reading failed:", error);
+                alert("圖片讀取失敗，請重試 (Failed to read file)");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Initialize Name from LocalStorage if exists
+    const savedName = localStorage.getItem('life_market_member_name');
+    if (savedName) {
+        memberNameInput.value = savedName;
+    }
+
+    // Performance: Debounce function to limit LocalStorage writes
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
         };
-    };
+    }
+
+    const saveName = debounce((value) => {
+        localStorage.setItem('life_market_member_name', value);
+    }, 300);
+
+    // Input Persistence
+    memberNameInput.addEventListener('input', (e) => {
+        saveName(e.target.value);
+    });
+
+    // 結帳邏輯保留
+    btnCheckout.addEventListener('click', () => {
+        const name = memberNameInput.value.trim();
+        if (!name) { alert('請先輸入會員姓名'); return; }
+
+        // 如果有調整照片，可以在這裡取得調整後的結果 (Base64)
+        if (cropperInstance) {
+            cropperInstance.result('base64').then(base64 => {
+                localStorage.setItem('cropped_image', base64);
+                window.location.href = 'checkout.html';
+            });
+        } else {
+            localStorage.setItem('life_market_member_name', name);
+            window.location.href = 'checkout.html';
+        }
+    });
 });
