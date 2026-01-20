@@ -21,9 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function initCroppie(src) {
         if (cropperInstance) cropperInstance.destroy();
 
+        // Get the actual size of the container to match perfectly
+        const width = cropperContainer.offsetWidth;
+        const height = cropperContainer.offsetHeight;
+
         cropperInstance = new Croppie(cropperContainer, {
-            viewport: { width: 80, height: 105, type: 'square' },
-            boundary: { width: 80, height: 105 },
+            viewport: { width: width, height: height, type: 'square' },
+            boundary: { width: width, height: height },
             showZoomer: false,        // 隱藏滑桿
             enableOrientation: true,
             mouseWheelZoom: true,     // 支援滑鼠滾輪縮放
