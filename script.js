@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('edit-modal');
     const fileInput = document.getElementById('file-input');
 
-    // 開關彈窗
-    document.getElementById('btn-start-edit').onclick = () => modal.style.display = 'flex';
+    document.getElementById('btn-open-modal').onclick = () => modal.style.display = 'flex';
     document.getElementById('btn-close-modal').onclick = () => modal.style.display = 'none';
     document.getElementById('modal-upload-trigger').onclick = () => fileInput.click();
 
@@ -44,19 +43,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const photoImg = new Image();
                 photoImg.src = photoBase64;
                 photoImg.onload = () => {
-                    // 精確坐標對位 (基於 1000x1400 比例)
-                    ctx.drawImage(photoImg, canvas.width * 0.142, canvas.height * 0.545, canvas.width * 0.23, canvas.width * 0.23 * 1.33);
+                    // 根據你給的圖檔比例計算出的精確位置
+                    ctx.drawImage(photoImg, canvas.width * 0.14, canvas.height * 0.54, canvas.width * 0.23, canvas.width * 0.23 * 1.33);
 
-                    // 繪製姓名
-                    ctx.font = "bold 45px Arial";
+                    ctx.font = "bold 42px Arial";
                     ctx.fillStyle = "black";
                     ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.63);
 
                     const finalData = canvas.toDataURL('image/png');
-                    document.getElementById('final-card-img').src = finalData;
-                    document.getElementById('final-result-display').style.display = 'block';
+                    const displayImg = document.getElementById('final-card-img');
+                    displayImg.src = finalData;
+                    displayImg.style.display = 'block';
                     modal.style.display = 'none';
 
+                    // 下載
                     const link = document.createElement('a');
                     link.download = 'my-life-card.png';
                     link.href = finalData;
