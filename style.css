@@ -27,7 +27,6 @@ body {
     background-color: var(--market-bg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     overflow: hidden;
-    /* Performance: Isolate layout containment */
     contain: content;
 }
 
@@ -43,6 +42,7 @@ img {
     pointer-events: none;
 }
 
+/* --- 跑馬燈 --- */
 .marquee-banner {
     position: absolute;
     left: 0;
@@ -60,87 +60,28 @@ img {
     display: flex;
     width: max-content;
     animation: marquee-run 20s linear infinite;
-    /* Performance: Hint to compositor */
     will-change: transform;
 }
 
 @keyframes marquee-run {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-50%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
-/* 視覺元件層級 */
-.top-green-banner {
-    top: 31px;
-    width: 100%;
-    z-index: 2;
-}
-
-.thanks-banner {
-    top: 8%;
-    right: -3.7%;
-    width: 103%;
-    z-index: 3;
-}
-
+/* --- 視覺元件層級 --- */
+.top-green-banner { top: 31px; width: 100%; z-index: 2; }
+.thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
 .cashier-sticker {
-    top: 6.8%;
-    left: 1%;
-    width: 33%;
-    z-index: 25;
+    top: 6.8%; left: 1%; width: 33%; z-index: 25;
     transform: rotate(-1deg);
     filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
 }
-
-.main-title-img {
-    top: 26.75%;
-    left: 51.5%;
-    transform: translateX(-50%);
-    width: 90%;
-    z-index: 5;
-}
-
-.membership-card-bg {
-    top: 44%;
-    left: 50.75%;
-    transform: translateX(-50%);
-    width: 85%;
-    z-index: 6;
-}
-
-.sale-2025-sticker {
-    top: 68.3%;
-    left: 28.5%;
-    width: 33%;
-    z-index: 30;
-    transform: rotate(-4deg);
-}
-
-.receipt-paper {
-    bottom: 5%;
-    left: -8%;
-    width: 45%;
-    z-index: 30;
-}
-
-.resignation-card {
-    bottom: 6.8%;
-    left: 26.5%;
-    width: 33.5%;
-    z-index: 12;
-}
-
-.hot-item-tag {
-    bottom: 11%;
-    right: 2%;
-    width: 40%;
-    z-index: 10;
-}
+.main-title-img { top: 26.75%; left: 51.5%; transform: translateX(-50%); width: 90%; z-index: 5; }
+.membership-card-bg { top: 44%; left: 50.75%; transform: translateX(-50%); width: 85%; z-index: 6; }
+.sale-2025-sticker { top: 68.3%; left: 28.5%; width: 33%; z-index: 30; transform: rotate(-4deg); }
+.receipt-paper { bottom: 5%; left: -8%; width: 45%; z-index: 30; }
+.resignation-card { bottom: 6.8%; left: 26.5%; width: 33.5%; z-index: 12; }
+.hot-item-tag { bottom: 11%; right: 2%; width: 40%; z-index: 10; }
 
 .checkout-btn {
     position: absolute;
@@ -152,96 +93,115 @@ img {
     pointer-events: auto;
     transition: transform 0.1s;
 }
+.checkout-btn:active { transform: scale(0.92); }
 
-.checkout-btn:active {
-    transform: scale(0.92);
+/* --- 彈窗系統 (Modal) --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    display: none; /* 由 JS 控制顯示 */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
 }
 
-/* 照片上傳與調整區域 */
-.upload-container {
-    position: absolute;
-    top: 54.5%;
-    left: 14.2%;
-    width: 23%;
+.modal-content {
+    background: white;
+    width: 85%;
+    max-width: 350px;
+    padding: 25px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    position: relative;
+}
+
+/* 彈窗內的編輯區域 */
+.upload-container-modal {
+    width: 140px;
     aspect-ratio: 3 / 4;
-    z-index: 7;
+    margin: 20px auto;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    position: relative;
     overflow: hidden;
-    /* 確保縮放時照片不超出卡片框 */
+    background: #f9f9f9;
 }
 
 .upload-zone {
     width: 100%;
     height: 100%;
-    border: 1px dashed rgba(0, 0, 0, 0.3);
-    position: relative;
-    cursor: pointer;
     display: flex;
-    /* 恢復居中佈局 */
     justify-content: center;
     align-items: center;
-    background: transparent;
+    cursor: pointer;
 }
 
-/* 這是你原本「照片」二字的樣式，我幫你加回來了 */
 .upload-tip {
     font-size: 14px;
-    /* 恢復你原本正常的大小 */
-    color: #000;
+    color: #888;
     font-weight: bold;
-    z-index: 1;
-    /* 確保文字在最初期是看得到的 */
+    pointer-events: none;
 }
 
 #cropper-container {
     width: 100%;
     height: 100%;
     position: absolute;
-    /* 絕對定位，當照片出現時會覆蓋在文字上方 */
     top: 0;
     left: 0;
-    z-index: 2;
-    /* 照片層級高於文字 */
 }
 
-/* 隱藏控制元件 */
-.cr-slider-wrap,
-.cr-vp-square::after {
-    display: none !important;
-}
-
-.cr-boundary {
-    border-radius: 0;
-}
-
-.name-input-container {
-    position: absolute;
-    top: 60%;
-    /* 調回原本的高度 */
-    left: 41%;
-    /* 稍微靠左，對準紅線起點 */
-    width: 45%;
-    /* 限制寬度防止溢出 */
-    z-index: 20;
+.name-input-modal {
+    margin: 20px 0;
     display: flex;
-    align-items: center;
-    /* 讓標籤與輸入框垂直居中對齊 */
+    flex-direction: column;
+    gap: 8px;
 }
 
-.name-label {
-    font-size: 13px;
+.name-input-modal span {
+    font-size: 14px;
     font-weight: bold;
-    color: #000;
-    white-space: nowrap;
+    color: #333;
 }
 
-.name-field {
-    width: 100%;
-    background: transparent;
+.name-field-modal {
     border: none;
-    font-size: 13px;
-    /* 縮小字體，與標籤一致 */
-    font-weight: bold;
-    color: #000;
+    border-bottom: 2px solid var(--brand-red);
+    padding: 8px;
+    font-size: 18px;
+    text-align: center;
     outline: none;
-    margin-left: 2px;
+    background: transparent;
+    font-weight: bold;
 }
+
+/* 彈窗按鈕 */
+#confirm-generate {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px 0;
+    width: 100%;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(203, 19, 45, 0.3);
+}
+
+#cancel-edit {
+    background: none;
+    color: #999;
+    border: none;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+/* 隱藏 Croppie 多餘元件 */
+.cr-slider-wrap, .cr-vp-square::after { display: none !important; }
