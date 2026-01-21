@@ -124,14 +124,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 橫向改為 0.12 (12%), 縱向提到 0.35 (35%)
                     ctx.drawImage(photoImg, canvas.width * 0.12, canvas.height * 0.35, photoW, photoH);
 
-                    // 2. 姓名位置校準
+                    // 2. 寫入姓名區塊
                     ctx.fillStyle = "#000000";
-                    // 增加字體大小到 80px，讓它在原始大圖上更明顯
-                    ctx.font = "bold 80px -apple-system, sans-serif"; 
-                    ctx.textAlign = "left"; 
+                    ctx.textAlign = "left";
                     
-                    // 橫向維持 0.45，縱向提到 0.58 嘗試對準紅線
-                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.58);
+                    // A. 畫出固定標籤「會員姓名：」
+                    ctx.font = "bold 45px -apple-system, sans-serif"; 
+                    ctx.fillText("會員姓名：", canvas.width * 0.40, canvas.height * 0.53);
+
+                    // B. 畫出使用者輸入的名字 (例如 "t")
+                    // 我們把起始點往右移，對準標籤後方
+                    ctx.font = "bold 45px -apple-system, sans-serif";
+                    ctx.fillText(name, canvas.width * 0.58, canvas.height * 0.53);
 
                     // 3. 產出與下載
                     const finalDataUrl = canvas.toDataURL('image/png');
