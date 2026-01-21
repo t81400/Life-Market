@@ -44,8 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadText.style.display = 'none';
                 uploadZone.style.border = 'none';
                 cropperContainer.style.display = 'block';
-                initCroppie(event.target.result);
-            }
+
+                // 給瀏覽器 100 毫秒的時間渲染容器，再啟動 Croppie
+                setTimeout(() => {
+                    initCroppie(event.target.result);
+                }, 100);
+            };
             // Error Handling: Handle file reading errors
             reader.onerror = (error) => {
                 console.error("File reading failed:", error);
@@ -79,20 +83,64 @@ document.addEventListener('DOMContentLoaded', () => {
         saveName(e.target.value);
     });
 
-    // 結帳邏輯保留
-    btnCheckout.addEventListener('click', () => {
+    // 結帳邏輯：點擊「開始結帳」觸發合成
+    btnCheckout.addEventListener('click', async () => {
         const name = memberNameInput.value.trim();
-        if (!name) { alert('請先輸入會員姓名'); return; }
-
-        // 如果有調整照片，可以在這裡取得調整後的結果 (Base64)
-        if (cropperInstance) {
-            cropperInstance.result('base64').then(base64 => {
-                localStorage.setItem('cropped_image', base64);
-                window.location.href = 'checkout.html';
-            });
-        } else {
-            localStorage.setItem('life_market_member_name', name);
-            window.location.href = 'checkout.html';
+        if (!name) {
+            alert('請先輸入會員姓名');
+            return;
         }
+
+        // 1. 建立畫布與工具
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const bgImg = new Image();
+        bgImg.src = '會員卡.png'; // 確保路徑正確
+
+        bgImg.onload = async () => {
+            // 2. 設定畫布尺寸與背景圖一致
+            canvas.width = bgImg.width;
+            canvas.height = bgImg.height;
+            ctx.drawImage(bgImg, 0, 0);
+
+            // 3. 取得 Croppie 裁切後的結果
+            if (cropperInstance) {
+                // result('base64') 會拿到你在框框內縮放、移動後的最終樣貌
+                const croppedDataUrl = await cropperInstance.result({
+                    type: 'base64',
+                    size: 'original',
+                    format: 'png',
+                    quality: 1
+                });
+
+                const photoImg = new Image();
+                photoImg.src = croppedDataUrl;
+                photoImg.onload = () => {
+                    // 4. 將照片畫到卡片上的正確座標 (根據你提供的 14.2%, 54.5% 換算)
+                    // 這裡的寬度 0.23 是根據你的 CSS width: 23%
+                    const photoW = canvas.width * 0.23;
+                    const photoH = photoW * (4 / 3); // 保持 3:4 比例
+                    ctx.drawImage(photoImg, canvas.width * 0.142, canvas.height * 0.545, photoW, photoH);
+
+                    // 5. 寫入姓名 (文字座標需要根據畫布比例微調)
+                    ctx.fillStyle = "#000000";
+                    ctx.font = "bold 42px -apple-system, sans-serif";
+                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.635);
+
+                    // 6. 產出最終圖檔並觸發下載
+                    const finalDataUrl = canvas.toDataURL('image/png');
+
+                    // 建立一個臨時下載連結
+                    const link = document.createElement('a');
+                    link.download = `人生超市會員卡-${name}.png`;
+                    link.href = finalDataUrl;
+                    link.click();
+
+                    alert('結帳完成！會員卡已存入相簿。');
+                };
+            } else {
+                alert('請先上傳會員照片');
+            }
+        };
     });
 });
