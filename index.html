@@ -6,15 +6,12 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-    <!-- Security: Content Security Policy (Strict) -->
-    <!-- Allow cdnjs, self; Disallow object/frame injection -->
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
 
-    <!-- Performance: Preconnect to CDN -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-    <title>人生超市 - 會員卡生成器 (照片調整增強版)</title>
+    <title>人生超市 - 會員卡生成器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -31,30 +28,48 @@
             <img src="交易明細.png" class="receipt-paper">
             <img src="熱賣商品.png" class="hot-item-tag">
             <img src="特價中2025.png" class="sale-2025-sticker">
+            
             <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
-        </div>
-        <div class="layer-interactive">
-            <input type="file" id="file-input" accept="image/*" style="display: none;">
-            <div class="upload-container">
-                <div class="upload-zone" id="upload-zone">
-                    <span class="upload-tip" id="upload-text">照片</span>
-                    <div id="cropper-container"></div>
-                </div>
-            </div>
-            <div class="name-input-container">
-                <span class="name-label">會員姓名：</span>
-                <input type="text" id="member-name" class="name-field">
-            </div>
         </div>
 
         <div class="layer-overlay">
             <div class="marquee-banner" style="top: 0;">
-                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
-                        SALE • SALE • SALE • SALE • </span></div>
+                <div class="marquee-content">
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                </div>
             </div>
             <div class="marquee-banner" style="bottom: 0;">
-                <div class="marquee-content"><span>SALE • SALE • SALE • SALE • SALE • SALE • </span><span>SALE • SALE •
-                        SALE • SALE • SALE • SALE • </span></div>
+                <div class="marquee-content">
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h2 style="margin-bottom: 10px; color: #cb132d;">製作會員卡</h2>
+                <p style="font-size: 14px; color: #666;">請上傳照片並輸入姓名</p>
+                
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                
+                <div id="modal-editor-area">
+                    <div class="upload-container-modal"> 
+                        <div class="upload-zone" id="upload-zone">
+                            <span class="upload-tip" id="upload-text">點擊上傳照片</span>
+                            <div id="cropper-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="name-input-modal">
+                        <span>會員姓名：</span>
+                        <input type="text" id="member-name" class="name-field-modal" placeholder="請輸入姓名">
+                    </div>
+                </div>
+                
+                <button id="confirm-generate">確認製作並下載</button>
+                <button id="cancel-edit">返回修改</button>
             </div>
         </div>
     </div>
