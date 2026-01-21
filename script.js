@@ -116,35 +116,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 const photoImg = new Image();
                 photoImg.src = croppedDataUrl;
                 photoImg.onload = () => {
-                    // 1. 照片位置校準
-                    // 原本 0.082 太靠左且太下面，我們向右移一點、向上提
+                    // 1. 照片位置 (這部分看起來已經穩定了)
                     const photoW = canvas.width * 0.22; 
                     const photoH = photoW * (4 / 3); 
-                    
-                    // 橫向改為 0.12 (12%), 縱向提到 0.35 (35%)
                     ctx.drawImage(photoImg, canvas.width * 0.12, canvas.height * 0.35, photoW, photoH);
 
-                    // 2. 寫入姓名區塊
+                    // 2. 寫入姓名區塊 (重新設計邏輯)
+                    // 強制設定顏色與字體，避免繼承錯誤
                     ctx.fillStyle = "#000000";
                     ctx.textAlign = "left";
-                    
-                    // A. 畫出固定標籤「會員姓名：」
-                    ctx.font = "bold 45px -apple-system, sans-serif"; 
-                    ctx.fillText("會員姓名：", canvas.width * 0.40, canvas.height * 0.53);
+                    ctx.textBaseline = "middle"; // 以文字中心對齊
 
-                    // B. 畫出使用者輸入的名字 (例如 "t")
-                    // 我們把起始點往右移，對準標籤後方
-                    ctx.font = "bold 45px -apple-system, sans-serif";
-                    ctx.fillText(name, canvas.width * 0.58, canvas.height * 0.53);
+                    // 設定超大字體 (根據大圖比例，建議 60-80px 之間)
+                    const fontSize = Math.round(canvas.height * 0.05); 
+                    ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
 
-                    // 3. 產出與下載
+                    // 【關鍵修正】我們把文字座標一次拉到位
+                    // 根據截圖，紅線位置大約在卡片高度的 52% 處
+                    const textX = canvas.width * 0.40;
+                    const textY = canvas.height * 0.52;
+
+                    // 同一行畫出所有內容，確保不漏掉
+                    ctx.fillText(`會員姓名：${name}`, textX, textY);
+
+                    // 3. 產出最終圖檔
                     const finalDataUrl = canvas.toDataURL('image/png');
+
+                    // 4. 觸發下載
                     const link = document.createElement('a');
                     link.download = `人生超市會員卡-${name}.png`;
                     link.href = finalDataUrl;
+                    document.body.appendChild(link); // 某些瀏覽器需要加這行才能下載
                     link.click();
+                    document.body.removeChild(link);
 
-                    alert('結帳完成！請檢查下載的圖片。');
+                    alert('結帳完成！');
                 };
             } else {
                 alert('請先上傳會員照片');
