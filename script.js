@@ -1,5 +1,5 @@
 /**
- * Life Market - Member Card Generator (Modal Version)
+ * Life Market - Member Card Generator (Modal & Realistic Preview Version)
  */
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. 元件宣告 ---
@@ -7,26 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadZone = document.getElementById('upload-zone');
     const uploadText = document.getElementById('upload-text');
     const cropperContainer = document.getElementById('cropper-container');
-    const memberNameInput = document.getElementById('member-name');
     
     // 主畫面按鈕
     const btnCheckout = document.getElementById('btn-checkout');
     
-    // 彈窗元件
+    // 彈窗元件 (使用你 HTML 中的新 ID)
     const modal = document.getElementById('edit-modal');
     const btnConfirm = document.getElementById('confirm-generate');
     const btnCancel = document.getElementById('cancel-edit');
+    const memberNameInputModal = document.getElementById('member-name-modal');
 
     let cropperInstance = null;
 
     // --- 2. 彈窗控制邏輯 ---
     
-    // 點擊主畫面「開始結帳」 -> 打開彈窗
+    // 點擊「開始結帳」 -> 打開彈窗
     btnCheckout.addEventListener('click', () => {
         modal.style.display = 'flex';
+        // 確保彈窗打開後，如果已經有圖片，重新計算尺寸
+        if (cropperInstance) {
+            cropperInstance.destroy();
+            cropperInstance = null;
+            uploadText.style.display = 'flex';
+        }
     });
 
-    // 點擊「取消/返回」 -> 關閉彈窗
+    // 點擊「返回修改」 -> 關閉彈窗
     btnCancel.addEventListener('click', () => {
         modal.style.display = 'none';
     });
@@ -38,9 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function initCroppie(src) {
         if (cropperInstance) cropperInstance.destroy();
 
-        // 彈窗內的容器尺寸
-        const width = cropperContainer.offsetWidth || 140;
-        const height = cropperContainer.offsetHeight || 186;
+        // 取得彈窗內預覽框的精確尺寸
+        const width = cropperContainer.offsetWidth;
+        const height = cropperContainer.offsetHeight;
 
         cropperInstance = new Croppie(cropperContainer, {
             viewport: { width: width, height: height, type: 'square' },
@@ -60,24 +66,25 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = (event) => {
                 uploadText.style.display = 'none';
                 cropperContainer.style.display = 'block';
-                // 給瀏覽器時間渲染彈窗內容
+                // 延時確保 CSS 渲染完成再初始化，避免縫隙
                 setTimeout(() => {
                     initCroppie(event.target.result);
-                }, 150);
+                }, 200);
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // --- 4. 最終合成與下載邏輯 (點擊彈窗內的確認製作) ---
+    // --- 4. 最終合成與下載邏輯 ---
 
     btnConfirm.addEventListener('click', async () => {
-        const name = memberNameInput.value.trim();
-        if (!name) { alert('請先輸入會員姓名'); return; }
-        if (!cropperInstance) { alert('請先上傳照片'); return; }
+        // 【關鍵修改】改抓彈窗內的輸入框值
+        const name = memberNameInputModal.value.trim();
+        
+        if (!name) { alert('請輸入會員姓名'); return; }
+        if (!cropperInstance) { alert('請上傳會員照片'); return; }
 
-        // 顯示處理中（可選）
-        btnConfirm.textContent = "處理中...";
+        btnConfirm.textContent = "正在製作...";
         btnConfirm.disabled = true;
 
         // A. 建立畫布
@@ -87,12 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         bgImg.src = '會員卡.png'; 
 
         bgImg.onload = async () => {
-            // B. 設定尺寸
             canvas.width = bgImg.width;
             canvas.height = bgImg.height;
             ctx.drawImage(bgImg, 0, 0);
 
-            // C. 取得裁切照片
+            // B. 取得裁切照片
             const croppedDataUrl = await cropperInstance.result({
                 type: 'base64',
                 size: 'original',
@@ -103,12 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const photoImg = new Image();
             photoImg.src = croppedDataUrl;
             photoImg.onload = () => {
-                // D. 繪製照片 (已調校座標)
+                // C. 繪製照片 (座標對應 CSS 中的 0.12, 0.35)
                 const photoW = canvas.width * 0.22;
                 const photoH = photoW * (4 / 3);
                 ctx.drawImage(photoImg, canvas.width * 0.12, canvas.height * 0.35, photoW, photoH);
 
-                // E. 繪製姓名 (已調校座標)
+                // D. 繪製姓名 (座標對應 CSS 中的 0.40, 0.52)
                 ctx.fillStyle = "#000000";
                 ctx.textAlign = "left";
                 ctx.textBaseline = "middle";
@@ -119,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const textY = canvas.height * 0.52;
                 ctx.fillText(`會員姓名：${name}`, textX, textY);
 
-                // F. 產出並下載
+                // E. 產出並下載
                 const finalDataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.download = `人生超市會員卡-${name}.png`;
@@ -128,11 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.click();
                 document.body.removeChild(link);
 
-                // G. 恢復按鈕並關閉彈窗
+                // F. 恢復狀態
                 btnConfirm.textContent = "確認製作並下載";
                 btnConfirm.disabled = false;
                 modal.style.display = 'none';
-                alert('結帳完成！會員卡已準備下載。');
+                alert('結帳完成！');
             };
         };
     });
