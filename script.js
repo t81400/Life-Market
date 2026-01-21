@@ -116,21 +116,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const photoImg = new Image();
                 photoImg.src = croppedDataUrl;
                 photoImg.onload = () => {
-                    // 4. 將照片畫到卡片上的正確座標 (根據你提供的 14.2%, 54.5% 換算)
-                    // 這裡的寬度 0.23 是根據你的 CSS width: 23%
-                    const photoW = canvas.width * 0.23;
-                    const photoH = photoW * (4 / 3); // 保持 3:4 比例
-                    ctx.drawImage(photoImg, canvas.width * 0.142, canvas.height * 0.545, photoW, photoH);
+                    // 1. 照片位置：修正為相對於「會員卡.png」本身的座標
+                    const photoW = canvas.width * 0.26; 
+                    const photoH = photoW * (4 / 3); 
+                    
+                    // 根據卡片設計微調的精確位置
+                    ctx.drawImage(photoImg, canvas.width * 0.082, canvas.height * 0.22, photoW, photoH);
 
-                    // 5. 寫入姓名 (文字座標需要根據畫布比例微調)
+                    // 2. 寫入姓名
                     ctx.fillStyle = "#000000";
-                    ctx.font = "bold 42px -apple-system, sans-serif";
-                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.635);
+                    ctx.font = "bold 60px -apple-system, sans-serif"; 
+                    ctx.textAlign = "left"; 
+                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.38);
 
-                    // 6. 產出最終圖檔並觸發下載
+                    // 3. 產出最終圖檔
                     const finalDataUrl = canvas.toDataURL('image/png');
 
-                    // 建立一個臨時下載連結
+                    // 4. 觸發自動下載
                     const link = document.createElement('a');
                     link.download = `人生超市會員卡-${name}.png`;
                     link.href = finalDataUrl;
