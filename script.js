@@ -116,29 +116,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const photoImg = new Image();
                 photoImg.src = croppedDataUrl;
                 photoImg.onload = () => {
-                    // 1. 照片位置：修正為相對於「會員卡.png」本身的座標
-                    const photoW = canvas.width * 0.26; 
+                    // 1. 照片位置校準
+                    // 原本 0.082 太靠左且太下面，我們向右移一點、向上提
+                    const photoW = canvas.width * 0.22; 
                     const photoH = photoW * (4 / 3); 
                     
-                    // 根據卡片設計微調的精確位置
-                    ctx.drawImage(photoImg, canvas.width * 0.082, canvas.height * 0.22, photoW, photoH);
+                    // 橫向改為 0.12 (12%), 縱向提到 0.35 (35%)
+                    ctx.drawImage(photoImg, canvas.width * 0.12, canvas.height * 0.35, photoW, photoH);
 
-                    // 2. 寫入姓名
+                    // 2. 姓名位置校準
                     ctx.fillStyle = "#000000";
-                    ctx.font = "bold 60px -apple-system, sans-serif"; 
+                    // 增加字體大小到 80px，讓它在原始大圖上更明顯
+                    ctx.font = "bold 80px -apple-system, sans-serif"; 
                     ctx.textAlign = "left"; 
-                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.38);
+                    
+                    // 橫向維持 0.45，縱向提到 0.58 嘗試對準紅線
+                    ctx.fillText(name, canvas.width * 0.45, canvas.height * 0.58);
 
-                    // 3. 產出最終圖檔
+                    // 3. 產出與下載
                     const finalDataUrl = canvas.toDataURL('image/png');
-
-                    // 4. 觸發自動下載
                     const link = document.createElement('a');
                     link.download = `人生超市會員卡-${name}.png`;
                     link.href = finalDataUrl;
                     link.click();
 
-                    alert('結帳完成！會員卡已存入相簿。');
+                    alert('結帳完成！請檢查下載的圖片。');
                 };
             } else {
                 alert('請先上傳會員照片');
