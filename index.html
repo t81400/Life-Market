@@ -3,22 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
-
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <title>人生超市 - 會員卡生成器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
+    <title>人生超市 - 會員入口</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="app-sandbox">
-        <div class="layer-visual">
+        <div id="home-view" class="layer-visual">
             <img src="Vector 1.png" class="top-green-banner">
             <img src="謝謝光臨橫幅.png" class="thanks-banner">
             <img src="請支援收銀.png" class="cashier-sticker">
@@ -28,11 +22,40 @@
             <img src="交易明細.png" class="receipt-paper">
             <img src="熱賣商品.png" class="hot-item-tag">
             <img src="特價中2025.png" class="sale-2025-sticker">
-            
             <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
         </div>
 
-        <div class="layer-overlay">
+        <div id="menu-view" class="layer-overlay" style="display: none; background: var(--market-bg); z-index: 500;">
+            <div class="menu-header">
+                <h2 class="welcome-text">歡迎光臨</h2>
+                <div class="user-badge" id="user-badge-display">
+                    <span id="display-member-name">貴賓</span>
+                </div>
+                <p>請選擇您想編輯的內容區域</p>
+            </div>
+            
+            <div class="menu-grid">
+                <div class="menu-item" onclick="navigateTo('hot-food')">
+                    <div class="item-circle"></div>
+                    <span>熱食區 (年度Dump)</span>
+                </div>
+                <div class="menu-item" onclick="navigateTo('fresh')">
+                    <div class="item-circle"></div>
+                    <span>生鮮區 (失敗list)</span>
+                </div>
+                <div class="menu-item" onclick="navigateTo('bestseller')">
+                    <div class="item-circle"></div>
+                    <span>暢銷榜 (成就list)</span>
+                </div>
+                <div class="menu-item" onclick="navigateTo('thanksgiving')">
+                    <div class="item-circle"></div>
+                    <span>感謝祭</span>
+                </div>
+            </div>
+            <button class="back-home-btn" onclick="location.reload()">重新辦卡</button>
+        </div>
+
+        <div class="layer-overlay" style="pointer-events: none;">
             <div class="marquee-banner" style="top: 0;">
                 <div class="marquee-content">
                     <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
@@ -50,27 +73,22 @@
         <div id="edit-modal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <h2 style="margin-bottom: 5px; color: #cb132d;">製作會員卡</h2>
-        
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
-        
                 <div id="modal-editor-area" class="preview-card-container">
                     <img src="會員卡.png" class="preview-card-bg">
-            
                     <div class="upload-container-modal"> 
                         <div class="upload-zone" id="upload-zone">
                             <span class="upload-tip" id="upload-text">點擊照片</span>
                             <div id="cropper-container"></div>
                         </div>
                     </div>
-
                     <div class="name-input-modal">
                         <span class="modal-label">會員姓名：</span>
                         <input type="text" id="member-name-modal" class="name-field-modal" placeholder="點擊輸入">
                     </div>
                 </div>
-        
-                <button id="confirm-generate">確認製作並下載</button>
-                <button id="cancel-edit">返回修改</button>
+                <button id="confirm-generate">確認製作並進店</button>
+                <button id="cancel-edit">返回</button>
             </div>
         </div>
     </div>
@@ -78,5 +96,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
