@@ -44,7 +44,7 @@ img {
     pointer-events: none;
 }
 
-/* --- 跑馬燈 (全域裝飾) --- */
+/* --- 跑馬燈 (全域裝飾 - 實現閉環與提速) --- */
 .global-overlay {
     position: absolute;
     inset: 0;
@@ -57,23 +57,29 @@ img {
     left: 0;
     width: 100%;
     height: 32px;
-    line-height: 32px;
     background-color: var(--brand-red);
     color: white;
-    font-weight: 900;
     overflow: hidden;
+    display: flex;
+    align-items: center;
 }
 
 .marquee-content {
     display: flex;
-    width: max-content;
-    animation: marquee-run 20s linear infinite;
+    white-space: nowrap;
+    animation: marquee-run 8s linear infinite; /* 加快速度 */
     will-change: transform;
+}
+
+.marquee-content span {
+    padding-right: 20px; /* 加大字間距 */
+    font-weight: 900;
+    font-size: 16px;
 }
 
 @keyframes marquee-run {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    100% { transform: translateX(-50%); } /* 完美的無限閉環動畫 */
 }
 
 /* --- 首頁元件定位 --- */
@@ -101,8 +107,8 @@ img {
 
 /* --- 選單頁面 (Menu View) --- */
 #menu-view {
-    z-index: 500; /* 確保在首頁之上 */
-    display: none; /* 由 JS 切換 */
+    z-index: 500;
+    display: none;
     flex-direction: column;
     align-items: center;
     background: var(--market-bg);
@@ -112,13 +118,6 @@ img {
     text-align: center;
     padding: 60px 20px 30px;
     color: white;
-}
-
-.welcome-text {
-    font-size: 28px;
-    font-weight: 900;
-    text-shadow: 2px 2px 0px var(--brand-red);
-    margin-bottom: 10px;
 }
 
 .user-badge {
@@ -148,12 +147,10 @@ img {
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.menu-item:active { transform: scale(0.9); }
-
 .item-circle {
     width: 90px;
     height: 90px;
-    background: #e67e22; /* 橘色圓圈 */
+    background: #e67e22;
     border-radius: 50%;
     margin-bottom: 12px;
     box-shadow: 0 6px 0px rgba(0,0,0,0.2);
@@ -161,7 +158,7 @@ img {
 }
 
 .menu-item span {
-    background: #f1c40f; /* 黃色標籤文字背景 */
+    background: #f1c40f;
     color: black;
     font-size: 13px;
     font-weight: 900;
@@ -170,18 +167,7 @@ img {
     white-space: nowrap;
 }
 
-.back-home-btn {
-    margin-top: 40px;
-    background: transparent;
-    border: 1px solid white;
-    color: white;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-/* --- 彈窗系統 (Modal) --- */
+/* --- 彈窗系統 (Modal & 修復後的預覽卡) --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -205,11 +191,12 @@ img {
 
 .preview-card-container {
     position: relative;
-    width: 100%;
-    margin: 15px 0;
+    width: 320px; /* 固定寬度防止縮放偏移 */
+    margin: 15px auto;
     aspect-ratio: 1.58 / 1;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 8px;
+    background: #fff;
 }
 
 .preview-card-bg {
@@ -219,19 +206,31 @@ img {
     z-index: 1;
 }
 
+/* 照片上傳區塊精準修復 */
 .upload-container-modal {
     position: absolute;
-    top: 35%;
-    left: 12%;
-    width: 22%;
-    aspect-ratio: 3 / 4;
-    z-index: 5;
+    top: 36%;
+    left: 14%;
+    width: 20%;
+    height: 28%;
+    z-index: 10;
     background: transparent;
-    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border: 1.5px dashed #ccc;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .upload-container-modal.has-photo { border: none !important; }
+
+#upload-text {
+    font-size: 10px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.2;
+    z-index: 2;
+}
 
 #cropper-container {
     width: 100.5% !important;
@@ -241,11 +240,12 @@ img {
     left: -0.25%;
 }
 
+/* 姓名輸入區塊精準修復 */
 .name-input-modal {
     position: absolute;
-    top: 52%;
-    left: 40%;
-    z-index: 5;
+    top: 55%;
+    left: 45%;
+    z-index: 10;
     display: flex;
     align-items: center;
     width: 45%;
@@ -254,11 +254,11 @@ img {
 .name-field-modal {
     border: none;
     background: transparent;
-    border-bottom: 1px solid var(--brand-red);
-    font-size: 11px;
+    border-bottom: 1.5px solid var(--brand-red);
+    font-size: 14px;
     font-weight: bold;
     color: #000;
-    width: 100%;
+    width: 80px;
     outline: none;
     padding: 0 2px;
 }
@@ -286,7 +286,7 @@ img {
     text-decoration: underline;
 }
 
-/* Croppie 優化 */
+/* Croppie 元件優化 */
 .cr-slider-wrap, .cr-vp-square::after { display: none !important; }
 .cr-boundary { width: 100% !important; height: 100% !important; }
 .cr-viewport { border: none !important; box-shadow: none !important; }
