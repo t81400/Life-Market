@@ -27,22 +27,19 @@
         </div>
 
         <div id="menu-view" class="layer-visual" style="display: none; background: var(--market-bg); flex-direction: column; align-items: center; z-index: 100;">
-            <div class="menu-header" style="text-align: center; padding-top: 50px;">
-                <div class="user-badge" style="background: white; color: var(--brand-red); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 10px;">
-                    <span id="display-member-name">貴賓</span> 會員
+            <div class="menu-header" style="text-align: center; padding-top: 50px; width: 100%;">
+                <div id="btn-back-to-home" class="user-badge" style="background: white; color: var(--brand-red); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 10px; cursor: pointer;">
+                    <span id="display-member-name">貴賓</span> 會員 (重新辦卡)
                 </div>
+                
                 <h2 style="color: white; margin-top: 10px;">人生超市選單</h2>
                 <p style="color: white; opacity: 0.9;">請選擇編輯區</p>
             </div>
             
-            <div class="menu-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; width: 100%;">
+            <div class="menu-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px; padding: 20px; width: 100%; justify-items: center;">
                 <div class="menu-item" onclick="navigateTo('hot-food')">
                     <div class="item-circle"></div>
                     <span>年度 Dump</span>
-                </div>
-                <div class="menu-item" id="btn-back-to-home">
-                    <div class="item-circle" style="background: #95a5a6;"></div>
-                    <span>重新辦卡</span>
                 </div>
             </div>
         </div>
