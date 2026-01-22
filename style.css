@@ -44,7 +44,7 @@ img {
     pointer-events: none;
 }
 
-/* --- 跑馬燈 (全域裝飾 - 實現閉環與提速) --- */
+/* --- 跑馬燈：恢復穩定閉環版 --- */
 .global-overlay {
     position: absolute;
     inset: 0;
@@ -67,19 +67,20 @@ img {
 .marquee-content {
     display: flex;
     white-space: nowrap;
-    animation: marquee-run 8s linear infinite; /* 加快速度 */
+    animation: marquee-run 12s linear infinite; /* 調整為舒適的速度 */
     will-change: transform;
 }
 
 .marquee-content span {
-    padding-right: 20px; /* 加大字間距 */
+    padding-right: 50px; /* 增加字間距，讓它看起來更清爽 */
     font-weight: 900;
     font-size: 16px;
+    letter-spacing: 2px;
 }
 
 @keyframes marquee-run {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); } /* 完美的無限閉環動畫 */
+    100% { transform: translateX(-50%); }
 }
 
 /* --- 首頁元件定位 --- */
@@ -167,7 +168,7 @@ img {
     white-space: nowrap;
 }
 
-/* --- 彈窗系統 (Modal & 修復後的預覽卡) --- */
+/* --- 彈窗系統 (Modal & 精準視覺回歸) --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -192,11 +193,12 @@ img {
 .preview-card-container {
     position: relative;
     width: 320px; /* 固定寬度防止縮放偏移 */
-    margin: 15px auto;
+    margin: 20px auto;
     aspect-ratio: 1.58 / 1;
     overflow: hidden;
     border-radius: 8px;
     background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .preview-card-bg {
@@ -206,16 +208,16 @@ img {
     z-index: 1;
 }
 
-/* 照片上傳區塊精準修復 */
+/* 照片區塊：對準設計稿虛線框 */
 .upload-container-modal {
     position: absolute;
-    top: 36%;
-    left: 14%;
-    width: 20%;
-    height: 28%;
+    top: 38%;
+    left: 10%;
+    width: 25%;
+    height: 42%;
     z-index: 10;
     background: transparent;
-    border: 1.5px dashed #ccc;
+    border: 1.5px dashed #bbb;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -225,10 +227,9 @@ img {
 .upload-container-modal.has-photo { border: none !important; }
 
 #upload-text {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: bold;
-    color: #333;
-    line-height: 1.2;
+    color: #666;
     z-index: 2;
 }
 
@@ -240,27 +241,35 @@ img {
     left: -0.25%;
 }
 
-/* 姓名輸入區塊精準修復 */
+/* 姓名輸入區塊：對準紅線位置 */
 .name-input-modal {
     position: absolute;
-    top: 55%;
-    left: 45%;
+    top: 61%;
+    left: 42%;
     z-index: 10;
     display: flex;
     align-items: center;
-    width: 45%;
+    width: 50%;
+}
+
+.modal-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #000;
+    margin-right: 4px;
+    white-space: nowrap;
 }
 
 .name-field-modal {
     border: none;
     background: transparent;
-    border-bottom: 1.5px solid var(--brand-red);
+    border-bottom: 2px solid var(--brand-red);
     font-size: 14px;
     font-weight: bold;
     color: #000;
-    width: 80px;
+    width: 100px;
     outline: none;
-    padding: 0 2px;
+    padding-bottom: 2px;
 }
 
 #confirm-generate {
