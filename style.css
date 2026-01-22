@@ -42,7 +42,7 @@ img {
     pointer-events: none;
 }
 
-/* --- 跑馬燈：恢復舊版穩定閉環 --- */
+/* --- 跑馬燈 --- */
 .marquee-banner {
     position: absolute;
     left: 0;
@@ -65,7 +65,6 @@ img {
 }
 
 .marquee-content span {
-    padding-right: 0px; 
     font-weight: 900;
     font-size: 18px;
     letter-spacing: 1px;
@@ -76,7 +75,7 @@ img {
     100% { transform: translateX(-50%); }
 }
 
-/* --- 首頁元件定位 (恢復舊版精確數值) --- */
+/* --- 首頁元件定位 --- */
 .top-green-banner { top: 31px; width: 100%; z-index: 2; }
 .thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
 .cashier-sticker { top: 6.8%; left: 1%; width: 33%; z-index: 25; transform: rotate(-1deg); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
@@ -99,7 +98,7 @@ img {
 }
 .checkout-btn:active { transform: scale(0.92); }
 
-/* --- 選單頁面 (Menu View) 整合 --- */
+/* --- 選單頁面 (Menu View) --- */
 #menu-view {
     z-index: 500;
     background: var(--market-bg);
@@ -158,7 +157,7 @@ img {
     white-space: nowrap;
 }
 
-/* --- 製作會員卡彈窗：修正外框與比例 --- */
+/* --- 彈窗系統 --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -185,7 +184,6 @@ img {
     aspect-ratio: 1.58 / 1;
     margin: 20px 0;
     overflow: hidden;
-    /* 移除奇怪的邊框效果，回歸純淨背景 */
     background: transparent;
 }
 
@@ -198,7 +196,7 @@ img {
     object-fit: contain;
 }
 
-/* 照片裁切區：恢復舊版精確比例與位置 */
+/* 修正 1：照片提示文字精準置中 */
 .upload-container-modal {
     position: absolute;
     top: 35%;
@@ -229,6 +227,8 @@ img {
     color: #000;
     font-weight: bold;
     z-index: 1;
+    text-align: center; /* 確保文字水平置中 */
+    width: 100%;
 }
 
 #cropper-container {
@@ -239,7 +239,7 @@ img {
     left: -0.25%;
 }
 
-/* 姓名輸入區：恢復舊版對位數值 */
+/* 修正 2：姓名輸入框顏色變淺並移除左側空格 */
 .name-input-modal {
     position: absolute;
     top: 52%;
@@ -266,7 +266,14 @@ img {
     color: #000;
     width: 100%;
     outline: none;
-    padding: 0 5px;
+    padding: 0; /* 移除 padding 解決空格問題 */
+    margin-left: 2px;
+}
+
+/* 調整 placeholder 顏色使其變淺 */
+.name-field-modal::placeholder {
+    color: #bbb; 
+    font-weight: normal;
 }
 
 #confirm-generate {
