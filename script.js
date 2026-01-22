@@ -18,13 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeView = document.getElementById('home-view');
     const menuView = document.getElementById('menu-view');
     const displayMemberName = document.getElementById('display-member-name');
+    
+    // 新增：返回按鈕元件
+    const btnBackToHome = document.getElementById('btn-back-to-home');
 
     let cropperInstance = null;
 
     // --- 2. 彈窗顯示/隱藏 ---
     btnCheckout.addEventListener('click', () => {
         modal.style.display = 'flex';
-        // 開啟時重置：如果已經有舊的裁切器則銷毀，回歸初始狀態
+        // 開啟時重置裁切器
         if (cropperInstance) {
             cropperInstance.destroy();
             cropperInstance = null;
@@ -48,27 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadText.style.display = 'none';
                 if (uploadContainer) uploadContainer.classList.add('has-photo');
                 
-                // 銷毀舊實例
                 if (cropperInstance) cropperInstance.destroy();
                 
-                /**
-                 * 動態獲取容器尺寸
-                 * 解決「比例跑掉」的關鍵：Croppie 的 viewport 必須等於容器的實際尺寸
-                 */
                 const zoneW = uploadZone.offsetWidth;
                 const zoneH = uploadZone.offsetHeight;
                 
-                // 初始化 Croppie
                 cropperInstance = new Croppie(cropperContainer, {
-                    viewport: { 
-                        width: zoneW, 
-                        height: zoneH, 
-                        type: 'square' 
-                    },
-                    boundary: { 
-                        width: zoneW, 
-                        height: zoneH 
-                    },
+                    viewport: { width: zoneW, height: zoneH, type: 'square' },
+                    boundary: { width: zoneW, height: zoneH },
                     showZoomer: false,
                     enableOrientation: true,
                     mouseWheelZoom: true
@@ -87,22 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirm.addEventListener('click', async () => {
         const name = memberNameInputModal.value.trim();
         
-        // 驗證
-        if (!name) { 
-            alert('請輸入會員姓名'); 
-            return; 
-        }
-        if (!cropperInstance) { 
-            alert('請先點擊方框上傳照片'); 
-            return; 
-        }
+        if (!name) { alert('請輸入會員姓名'); return; }
+        if (!cropperInstance) { alert('請先點擊方框上傳照片'); return; }
 
-        // UI 狀態切換
         btnConfirm.textContent = "製作中...";
         btnConfirm.disabled = true;
 
         try {
-            // 取得裁切後的圖片 (size 使用 viewport 確保完全填滿容器)
             const croppedPhoto = await cropperInstance.result({
                 type: 'base64',
                 size: 'viewport', 
@@ -110,48 +91,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 quality: 1
             });
 
-            // 儲存資料到本地 (供後續編輯器使用)
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
 
-            // 更新選單頁面的個人資訊
             if (displayMemberName) {
                 displayMemberName.textContent = name;
             }
 
-            // 畫面轉場邏輯
+            // 切換視圖
             modal.style.display = 'none';
             if (homeView) homeView.style.display = 'none';
-            if (menuView) {
-                menuView.style.display = 'flex';
-                // 隱藏全域跑馬燈，或是讓它保持顯示（視設計而定）
-                // document.querySelector('.layer-overlay').style.display = 'none';
-            }
-
-            console.log("會員卡製作成功，姓名：" + name);
+            if (menuView) menuView.style.display = 'flex';
 
         } catch (err) {
             console.error("製作失敗:", err);
-            alert("照片處理出錯，請換一張試試看");
+            alert("照片處理出錯");
         } finally {
             btnConfirm.textContent = "確認製作並進店";
             btnConfirm.disabled = false;
         }
     });
+
+    // --- 5. 新增：返回首頁功能 (重新辦卡) ---
+    if (btnBackToHome) {
+        btnBackToHome.addEventListener('click', () => {
+            // 詢問使用者是否確定 (選填)
+            if (confirm('確定要重新辦卡嗎？目前進度將不會保留。')) {
+                // 回到首頁狀態
+                if (menuView) menuView.style.display = 'none';
+                if (homeView) homeView.style.display = 'flex';
+                
+                // 清空輸入框與裁切狀態，方便重新開始
+                memberNameInputModal.value = '';
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                    cropperInstance = null;
+                }
+                uploadText.style.display = 'flex';
+                if (uploadContainer) uploadContainer.classList.remove('has-photo');
+            }
+        });
+    }
 });
 
 /**
  * 選單跳轉功能
  */
 function navigateTo(pageId) {
-    const zoneNames = {
-        'hot-food': '熱食區 (年度Dump)',
-        'fresh': '生鮮區 (失敗list)',
-        'bestseller': '暢銷榜 (成就list)',
-        'thanksgiving': '感謝祭'
-    };
-
-    const targetName = zoneNames[pageId] || pageId;
-    console.log(`正在準備進入：${targetName}`);
+    const targetName = pageId === 'hot-food' ? '熱食區 (年度Dump)' : pageId;
     alert(`歡迎來到【${targetName}】！\n接下來將載入六宮格編輯模板。`);
 }
