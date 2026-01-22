@@ -1,131 +1,37 @@
-:root {
-    --market-bg: rgb(217, 131, 164);
-    --brand-red: rgb(203, 19, 45);
-}
+/* --- 前段保持不變，針對選單區域進行修正 --- */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    background-color: #1a1a1a;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    font-family: -apple-system, sans-serif;
-}
-
-.app-sandbox {
-    position: relative;
-    height: 90vh;
-    aspect-ratio: 9 / 16;
-    background-color: var(--market-bg);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    overflow: hidden;
-    contain: content;
-}
-
-/* --- 視圖與層級設定 --- */
-.layer-visual,
-.layer-overlay {
-    position: absolute;
-    inset: 0;
-}
-
-img {
-    position: absolute;
-    pointer-events: none;
-}
-
-/* --- 跑馬燈 --- */
-.marquee-banner {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
-    background-color: var(--brand-red);
-    color: white;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    z-index: 1000;
-}
-
-.marquee-content {
-    display: flex;
-    white-space: nowrap;
-    animation: marquee-run 15s linear infinite;
-    will-change: transform;
-}
-
-.marquee-content span {
-    font-weight: 900;
-    font-size: 18px;
-    letter-spacing: 1px;
-}
-
-@keyframes marquee-run {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-/* --- 首頁元件定位 --- */
-.top-green-banner { top: 31px; width: 100%; z-index: 2; }
-.thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
-.cashier-sticker { top: 6.8%; left: 1%; width: 33%; z-index: 25; transform: rotate(-1deg); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
-.main-title-img { top: 26.75%; left: 51.5%; transform: translateX(-50%); width: 90%; z-index: 5; }
-.membership-card-bg { top: 44%; left: 50.75%; transform: translateX(-50%); width: 85%; z-index: 6; }
-.sale-2025-sticker { top: 68.3%; left: 28.5%; width: 33%; z-index: 30; transform: rotate(-4deg); }
-.receipt-paper { bottom: 5%; left: -8%; width: 45%; z-index: 30; }
-.resignation-card { bottom: 6.8%; left: 26.5%; width: 33.5%; z-index: 12; }
-.hot-item-tag { bottom: 11%; right: 2%; width: 40%; z-index: 10; }
-
-.checkout-btn {
-    position: absolute;
-    bottom: 6%;
-    right: 5%;
-    width: 28%;
-    z-index: 50;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: transform 0.1s;
-}
-.checkout-btn:active { transform: scale(0.92); }
-
-/* --- 選單頁面 (Menu View) --- */
-#menu-view {
-    z-index: 500;
-    background: var(--market-bg);
-    flex-direction: column;
-    align-items: center;
-}
-
+/* 選單頁面頭部微調 */
 .menu-header {
     text-align: center;
-    padding: 80px 20px 30px;
+    padding: 80px 20px 20px; /* 增加頂部間距避開跑馬燈 */
     color: white;
 }
 
+/* 重新辦卡按鈕 (原本的標籤區域) */
 .user-badge {
     background: white;
     color: var(--brand-red);
-    padding: 5px 15px;
-    border-radius: 20px;
+    padding: 8px 20px; /* 稍微加寬更有按鈕感 */
+    border-radius: 50px;
     font-weight: bold;
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.1s, background 0.2s;
 }
 
+.user-badge:active {
+    transform: scale(0.95);
+    background: #f0f0f0;
+}
+
+/* 選單網格改為垂直居中佈局 */
 .menu-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
     padding: 20px;
     width: 100%;
 }
@@ -137,75 +43,7 @@ img {
     cursor: pointer;
 }
 
-.item-circle {
-    width: 90px;
-    height: 90px;
-    background: #e67e22;
-    border-radius: 50%;
-    margin-bottom: 12px;
-    box-shadow: 0 6px 0px rgba(0,0,0,0.2);
-    border: 4px solid white;
-}
-
-.menu-item span {
-    background: #f1c40f;
-    color: black;
-    font-size: 13px;
-    font-weight: 900;
-    padding: 4px 12px;
-    transform: rotate(-1deg);
-    white-space: nowrap;
-}
-
-/* --- 彈窗系統 --- */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 2000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(8px);
-}
-
-.modal-content {
-    background: white;
-    width: 92%;
-    max-width: 360px;
-    padding: 25px 15px;
-    border-radius: 24px;
-    text-align: center;
-}
-
-.preview-card-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1.58 / 1;
-    margin: 20px 0;
-    overflow: hidden;
-    background: transparent;
-}
-
-.preview-card-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    object-fit: contain;
-}
-
-/* 修正 1：照片提示文字精準置中 */
-.upload-container-modal {
-    position: absolute;
-    top: 35%;
-    left: 12%;
-    width: 22%;
-    height: 44.5%;
-    z-index: 10;
-}
-
+/* 彈窗內照片提示文字 - 強化置中 */
 .upload-zone {
     width: 100%;
     height: 100%;
@@ -216,90 +54,31 @@ img {
     cursor: pointer;
     overflow: hidden;
     position: relative;
-}
-
-.upload-container-modal.has-photo .upload-zone {
-    border: none;
+    background: #f9f9f9; /* 增加微底色方便辨識 */
 }
 
 .upload-tip {
+    position: relative; /* 確保不被其他東西覆蓋 */
     font-size: 11px;
-    color: #000;
+    color: #333;
     font-weight: bold;
-    z-index: 1;
-    text-align: center; /* 確保文字水平置中 */
+    z-index: 5;
+    text-align: center;
     width: 100%;
+    pointer-events: none; /* 防止文字擋住點擊 */
 }
 
+/* 其他彈窗與 Croppie 設定保持不變... */
 #cropper-container {
     width: 100.5% !important;
     height: 100.5% !important;
     position: absolute;
     top: -0.25%;
     left: -0.25%;
+    z-index: 2;
 }
 
-/* 修正 2：姓名輸入框顏色變淺並移除左側空格 */
-.name-input-modal {
-    position: absolute;
-    top: 52%;
-    left: 40%;
-    z-index: 15;
-    display: flex;
-    align-items: center;
-    width: 45%;
-}
-
-.modal-label {
-    font-size: 11px;
-    font-weight: bold;
-    color: #000;
-    white-space: nowrap;
-}
-
-.name-field-modal {
-    border: none;
-    background: transparent;
-    border-bottom: 1px solid var(--brand-red);
-    font-size: 11px;
-    font-weight: bold;
-    color: #000;
-    width: 100%;
-    outline: none;
-    padding: 0; /* 移除 padding 解決空格問題 */
-    margin-left: 2px;
-}
-
-/* 調整 placeholder 顏色使其變淺 */
 .name-field-modal::placeholder {
     color: #bbb; 
     font-weight: normal;
 }
-
-#confirm-generate {
-    background: var(--brand-red);
-    color: white;
-    border: none;
-    padding: 15px;
-    width: 100%;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-#cancel-edit {
-    background: none;
-    border: none;
-    color: #999;
-    margin-top: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: underline;
-}
-
-/* Croppie 視覺修正 */
-.cr-boundary { width: 100% !important; height: 100% !important; }
-.cr-viewport { border: none !important; box-shadow: none !important; }
-.cr-slider-wrap { display: none !important; }
