@@ -1,8 +1,5 @@
-/**
- * Life Market - Member Card Generator
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. 元件宣告 ---
+    // --- 元件宣告 ---
     const fileInput = document.getElementById('file-input');
     const uploadZone = document.getElementById('upload-zone');
     const uploadText = document.getElementById('upload-text');
@@ -14,46 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirm = document.getElementById('confirm-generate');
     const btnCancel = document.getElementById('cancel-edit');
     const memberNameInputModal = document.getElementById('member-name-modal');
+    
+    const homeView = document.getElementById('home-view');
+    const menuView = document.getElementById('menu-view');
+    const displayMemberName = document.getElementById('display-member-name');
 
     let cropperInstance = null;
 
-    // --- 2. 彈窗控制邏輯 ---
-    
+    // --- 彈窗控制 ---
     btnCheckout.addEventListener('click', () => {
         modal.style.display = 'flex';
-        // 開啟時重置狀態
-        if (cropperInstance) {
-            cropperInstance.destroy();
-            cropperInstance = null;
-            uploadText.style.display = 'flex';
-            uploadContainer.classList.remove('has-photo');
-        }
     });
 
     btnCancel.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    // --- 3. 照片上傳與裁切邏輯 ---
-
+    // --- 照片上傳 ---
     uploadZone.addEventListener('click', () => fileInput.click());
-
-    function initCroppie(src) {
-        if (cropperInstance) cropperInstance.destroy();
-
-        const width = cropperContainer.offsetWidth;
-        const height = cropperContainer.offsetHeight;
-
-        cropperInstance = new Croppie(cropperContainer, {
-            viewport: { width: width, height: height, type: 'square' },
-            boundary: { width: width, height: height },
-            showZoomer: false,
-            enableOrientation: true,
-            mouseWheelZoom: true,
-            enableZoom: true
-        });
-        cropperInstance.bind({ url: src });
-    }
 
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -61,78 +36,60 @@ document.addEventListener('DOMContentLoaded', () => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 uploadText.style.display = 'none';
-                cropperContainer.style.display = 'block';
-                
-                // 【核心修正】加入 has-photo class 來隱藏虛線
                 if (uploadContainer) uploadContainer.classList.add('has-photo');
-
-                setTimeout(() => {
-                    initCroppie(event.target.result);
-                }, 200);
+                
+                if (cropperInstance) cropperInstance.destroy();
+                cropperInstance = new Croppie(cropperContainer, {
+                    viewport: { width: 80, height: 106, type: 'square' },
+                    boundary: { width: 80, height: 106 },
+                    showZoomer: false
+                });
+                cropperInstance.bind({ url: event.target.result });
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // --- 4. 最終合成與下載邏輯 ---
-
+    // --- 核心：確認製作並進入選單 ---
     btnConfirm.addEventListener('click', async () => {
         const name = memberNameInputModal.value.trim();
-        
         if (!name) { alert('請輸入會員姓名'); return; }
-        if (!cropperInstance) { alert('請上傳會員照片'); return; }
+        if (!cropperInstance) { alert('請上傳照片'); return; }
 
-        btnConfirm.textContent = "正在製作...";
+        btnConfirm.textContent = "正在製作通行證...";
         btnConfirm.disabled = true;
 
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const bgImg = new Image();
-        bgImg.src = '會員卡.png'; 
-
-        bgImg.onload = async () => {
-            canvas.width = bgImg.width;
-            canvas.height = bgImg.height;
-            ctx.drawImage(bgImg, 0, 0);
-
-            const croppedDataUrl = await cropperInstance.result({
+        try {
+            // 1. 取得裁切後的頭像
+            const croppedPhoto = await cropperInstance.result({
                 type: 'base64',
-                size: 'original',
-                format: 'png',
-                quality: 1
+                size: 'original'
             });
 
-            const photoImg = new Image();
-            photoImg.src = croppedDataUrl;
-            photoImg.onload = () => {
-                // 合成座標對位
-                const photoW = canvas.width * 0.22;
-                const photoH = photoW * (4 / 3);
-                ctx.drawImage(photoImg, canvas.width * 0.12, canvas.height * 0.35, photoW, photoH);
+            // 2. 模擬合成會員卡並儲存 (這步可確保之後頁面拿得到這張卡)
+            localStorage.setItem('member_name', name);
+            localStorage.setItem('member_photo', croppedPhoto);
 
-                ctx.fillStyle = "#000000";
-                ctx.textAlign = "left";
-                ctx.textBaseline = "middle";
-                const fontSize = Math.round(canvas.height * 0.05);
-                ctx.font = `bold ${fontSize}px -apple-system, sans-serif`;
-                
-                const textX = canvas.width * 0.40;
-                const textY = canvas.height * 0.52;
-                ctx.fillText(`會員姓名：${name}`, textX, textY);
+            // 3. 切換畫面
+            modal.style.display = 'none';
+            homeView.style.display = 'none';
+            menuView.style.display = 'flex';
+            displayMemberName.textContent = name + " 會員";
 
-                const finalDataUrl = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.download = `人生超市會員卡-${name}.png`;
-                link.href = finalDataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                btnConfirm.textContent = "確認製作並下載";
-                btnConfirm.disabled = false;
-                modal.style.display = 'none';
-                alert('結帳完成！');
-            };
-        };
+            console.log("會員卡製作完成，已進入選單");
+        } catch (err) {
+            console.error(err);
+            alert("製作失敗，請重試");
+        } finally {
+            btnConfirm.textContent = "確認製作並進店";
+            btnConfirm.disabled = false;
+        }
     });
 });
+
+// 跳轉功能
+function navigateTo(pageId) {
+    // 根據你的需求，這裡可以導向不同的編輯 HTML
+    // 例如：location.href = `editor_${pageId}.html`;
+    alert(`歡迎來到超市【${pageId}】分區！\n功能開發中，即將啟動圖片模板編輯器...`);
+}
