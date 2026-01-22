@@ -19,21 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuView = document.getElementById('menu-view');
     const displayMemberName = document.getElementById('display-member-name');
     
-    // 新增：返回按鈕元件
+    // 返回按鈕元件 (對應 HTML 新位置)
     const btnBackToHome = document.getElementById('btn-back-to-home');
 
     let cropperInstance = null;
 
-    // --- 2. 彈窗顯示/隱藏 ---
-    btnCheckout.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        // 開啟時重置裁切器
+    // --- 封裝清理邏輯 (解決文字跑掉的關鍵) ---
+    function resetUploader() {
         if (cropperInstance) {
             cropperInstance.destroy();
             cropperInstance = null;
-            uploadText.style.display = 'flex';
-            if (uploadContainer) uploadContainer.classList.remove('has-photo');
         }
+        // 關鍵修正：徹底清空容器，讓 CSS flex 重新生效
+        cropperContainer.innerHTML = ''; 
+        uploadText.style.display = 'flex';
+        if (uploadContainer) uploadContainer.classList.remove('has-photo');
+    }
+
+    // --- 2. 彈窗顯示/隱藏 ---
+    btnCheckout.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        resetUploader(); // 開啟時確保狀態乾淨
     });
 
     btnCancel.addEventListener('click', () => {
@@ -51,7 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadText.style.display = 'none';
                 if (uploadContainer) uploadContainer.classList.add('has-photo');
                 
-                if (cropperInstance) cropperInstance.destroy();
+                if (cropperInstance) {
+                    cropperInstance.destroy();
+                    cropperContainer.innerHTML = '';
+                }
                 
                 const zoneW = uploadZone.offsetWidth;
                 const zoneH = uploadZone.offsetHeight;
@@ -76,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. 確認製作並進入選單 ---
     btnConfirm.addEventListener('click', async () => {
         const name = memberNameInputModal.value.trim();
-        
         if (!name) { alert('請輸入會員姓名'); return; }
         if (!cropperInstance) { alert('請先點擊方框上傳照片'); return; }
 
@@ -98,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayMemberName.textContent = name;
             }
 
-            // 切換視圖
             modal.style.display = 'none';
             if (homeView) homeView.style.display = 'none';
             if (menuView) menuView.style.display = 'flex';
@@ -112,32 +119,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 5. 新增：返回首頁功能 (重新辦卡) ---
+    // --- 5. 返回首頁功能 (重新辦卡) ---
     if (btnBackToHome) {
         btnBackToHome.addEventListener('click', () => {
-            // 詢問使用者是否確定 (選填)
             if (confirm('確定要重新辦卡嗎？目前進度將不會保留。')) {
-                // 回到首頁狀態
                 if (menuView) menuView.style.display = 'none';
                 if (homeView) homeView.style.display = 'flex';
                 
-                // 清空輸入框與裁切狀態，方便重新開始
                 memberNameInputModal.value = '';
-                if (cropperInstance) {
-                    cropperInstance.destroy();
-                    cropperInstance = null;
-                }
-                uploadText.style.display = 'flex';
-                if (uploadContainer) uploadContainer.classList.remove('has-photo');
+                resetUploader(); // 這裡同樣調用清理邏輯
             }
         });
     }
 });
 
-/**
- * 選單跳轉功能
- */
 function navigateTo(pageId) {
     const targetName = pageId === 'hot-food' ? '熱食區 (年度Dump)' : pageId;
-    alert(`歡迎來到【${targetName}】！\n接下來將載入六宮格編輯模板。`);
+    alert(`歡迎來到【${targetName}】！\n接下來將載入編輯模板。`);
 }
