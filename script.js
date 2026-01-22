@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 清除舊的 Croppie 實例
                 if (cropperInstance) cropperInstance.destroy();
                 
-                // 初始化 Croppie (符合會員卡比例)
+                // 初始化 Croppie (符合會員卡照片比例)
                 cropperInstance = new Croppie(cropperContainer, {
                     viewport: { width: 80, height: 106, type: 'square' },
                     boundary: { width: 80, height: 106 },
@@ -64,23 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         }
         if (!cropperInstance) { 
-            alert('請上傳照片'); 
+            alert('請先上傳照片並調整'); 
             return; 
         }
 
         // 狀態切換
-        btnConfirm.textContent = "正在製作通行證...";
+        btnConfirm.textContent = "製作中...";
         btnConfirm.disabled = true;
 
         try {
-            // 取得裁切後的頭像 (Base64)
+            // 取得裁切後的頭像 (使用 viewport 確保裁切範圍與看到的一致)
             const croppedPhoto = await cropperInstance.result({
                 type: 'base64',
-                size: 'original',
-                quality: 0.9
+                size: 'viewport', 
+                format: 'png',
+                quality: 1
             });
 
-            // 儲存資料到本地，方便跨頁面呼叫
+            // 儲存資料到本地
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
 
@@ -97,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("會員卡製作完成，已進入選單。姓名：" + name);
 
         } catch (err) {
-            console.error("製作過程中發生錯誤:", err);
-            alert("製作失敗，請重試");
+            console.error("Croppie Error:", err);
+            alert("製作失敗 (原因: " + err.message + ")，請檢查照片格式後重試");
         } finally {
             btnConfirm.textContent = "確認製作並進店";
             btnConfirm.disabled = false;
@@ -111,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {string} pageId - 點擊的區域標籤
  */
 function navigateTo(pageId) {
-    // 這裡預留給下一步：六宮格編輯器的跳轉
     const zoneNames = {
         'hot-food': '熱食區 (年度Dump)',
         'fresh': '生鮮區 (失敗list)',
@@ -120,10 +120,5 @@ function navigateTo(pageId) {
     };
 
     console.log(`正在準備進入：${zoneNames[pageId] || pageId}`);
-    
-    // 目前先以 Alert 提示，下一步我們會實作載入對應模板的邏輯
     alert(`歡迎來到【${zoneNames[pageId] || pageId}】！\n接下來將載入六宮格編輯模板。`);
-    
-    // 未來範例：
-    // window.location.href = `editor.html?type=${pageId}`;
 }
