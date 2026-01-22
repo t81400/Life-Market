@@ -117,15 +117,15 @@ img {
     box-shadow: 0 15px 40px rgba(0,0,0,0.4);
 }
 
-/* --- 彈窗擬真預覽區 (問題三實作) --- */
+/* --- 彈窗擬真預覽區 --- */
 .preview-card-container {
     position: relative;
     width: 100%;
     margin: 15px 0;
     aspect-ratio: 1.58 / 1; 
-    background: #fff;
+    background: transparent; /* 改為透明，防止底色溢出 */
     overflow: hidden;
-    border: 1px solid #eee;
+    border: none; /* 解決問題一：移除奇怪的外框 */
     border-radius: 12px;
 }
 
@@ -135,11 +135,11 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: fill; 
+    object-fit: contain; /* 確保比例精準不產生外框 */
     z-index: 1;
 }
 
-/* 解決問題二：消除照片與虛線框的縫隙 */
+/* 解決問題二：照片上傳後的虛線處理 */
 .upload-container-modal {
     position: absolute;
     top: 35%; 
@@ -147,9 +147,14 @@ img {
     width: 22%; 
     aspect-ratio: 3 / 4;
     z-index: 5;
-    background: rgba(255,255,255,0.3);
-    border: 1px dashed rgba(0,0,0,0.2);
+    background: transparent;
+    border: 1px dashed rgba(0,0,0,0.2); /* 預設虛線 */
     overflow: hidden;
+}
+
+/* 上傳照片後由 JS 加入此 class */
+.upload-container-modal.has-photo {
+    border: none !important;
 }
 
 .upload-zone {
@@ -168,13 +173,13 @@ img {
     z-index: 1;
 }
 
-/* 強制 Croppie 元件填滿容器，不留邊距 */
+/* 強制 Croppie 填滿，稍微溢出 0.5% 來完美遮蓋邊界 */
 #cropper-container {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100.5% !important;
+    height: 100.5% !important;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -0.25%;
+    left: -0.25%;
 }
 
 .cr-boundary {
