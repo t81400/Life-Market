@@ -1,12 +1,7 @@
-/**
- * 人生超市 - 核心樣式表 (全平台穩定整合版)
- */
-
 /* --- 1. 核心變數與基礎設定 --- */
 :root {
     --market-bg: rgb(217, 131, 164);
     --brand-red: rgb(203, 19, 45);
-    --placeholder-gray: #bbb;
 }
 
 * {
@@ -23,7 +18,7 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, sans-serif;
 }
 
 .app-sandbox {
@@ -33,6 +28,7 @@ body {
     background-color: var(--market-bg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     overflow: hidden;
+    contain: content;
 }
 
 /* --- 2. 視圖與層級設定 --- */
@@ -107,11 +103,8 @@ img {
 #menu-view {
     z-index: 500;
     background: var(--market-bg);
-    display: none; /* 預設隱藏，由 JS 控制切換 */
     flex-direction: column;
     align-items: center;
-    position: absolute;
-    inset: 0;
 }
 
 .menu-header {
@@ -131,6 +124,12 @@ img {
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: all 0.1s;
+    border: 2px solid transparent;
+}
+
+.user-badge:active {
+    transform: scale(0.95);
+    background: #fdfdfd;
 }
 
 .menu-grid {
@@ -159,7 +158,17 @@ img {
     border: 4px solid white;
 }
 
-/* --- 6. 彈窗與照片裁切核心 --- */
+.menu-item span {
+    background: #f1c40f;
+    color: black;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 4px 12px;
+    transform: rotate(-1deg);
+    white-space: nowrap;
+}
+
+/* --- 6. 彈窗與照片裁切修正 --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -186,6 +195,7 @@ img {
     aspect-ratio: 1.58 / 1;
     margin: 20px 0;
     overflow: hidden;
+    background: transparent;
 }
 
 .preview-card-bg {
@@ -197,42 +207,43 @@ img {
     object-fit: contain;
 }
 
-/* 上傳框精確定位 */
 .upload-container-modal {
     position: absolute;
     top: 35%;
     left: 12%;
-    width: 22.5%;
-    height: 45%;
+    width: 22%;
+    height: 44.5%;
     z-index: 10;
 }
 
 .upload-zone {
     width: 100%;
     height: 100%;
-    border: 2px dashed var(--placeholder-gray) !important;
-    background: #fcfcfc;
-    position: relative;
+    border: 1.5px dashed #ccc;
+    position: relative; /* 關鍵：讓提示文字絕對定位參考此處 */
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible; /* 讓裁切插件能正常渲染 */
+    overflow: hidden;
+    background: #fcfcfc;
 }
 
-/* 有照片時，虛線變透明但不消失，確保寬高不跳動 */
 .upload-container-modal.has-photo .upload-zone {
-    border-color: transparent !important;
-    background: transparent !important;
+    border: none;
+    background: transparent;
 }
 
+/* 【修正：文字精準置中】 */
 .upload-tip {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 幾何上的絕對置中 */
     font-size: 11px;
-    color: var(--placeholder-gray);
+    color: #bbb;
     font-weight: bold;
     z-index: 5;
-    pointer-events: none;
+    text-align: center;
+    width: 100%;
+    pointer-events: none; /* 防止點擊文字沒反應 */
 }
 
 #cropper-container {
@@ -242,10 +253,9 @@ img {
     top: 0;
     left: 0;
     z-index: 2;
-    touch-action: none;
 }
 
-/* --- 7. 姓名輸入框 --- */
+/* --- 7. 姓名輸入框優化 --- */
 .name-input-modal {
     position: absolute;
     top: 52%;
@@ -260,6 +270,7 @@ img {
     font-size: 11px;
     font-weight: bold;
     color: #000;
+    white-space: nowrap;
 }
 
 .name-field-modal {
@@ -271,10 +282,16 @@ img {
     color: #000;
     width: 100%;
     outline: none;
+    padding: 0;
     margin-left: 2px;
 }
 
-/* --- 8. 按鈕樣式 --- */
+.name-field-modal::placeholder {
+    color: #bbb;
+    font-weight: normal;
+}
+
+/* --- 8. 按鈕與其餘元件 --- */
 #confirm-generate {
     background: var(--brand-red);
     color: white;
@@ -299,7 +316,7 @@ img {
     text-decoration: underline;
 }
 
-/* Croppie 插件內部修正 */
+/* Croppie 視覺修正 */
 .cr-boundary { width: 100% !important; height: 100% !important; }
-.cr-viewport { border: none !important; box-shadow: 0 0 0 1000px rgba(255,255,255,0.4) !important; }
+.cr-viewport { border: none !important; box-shadow: none !important; }
 .cr-slider-wrap { display: none !important; }
