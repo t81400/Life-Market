@@ -3,9 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
     <title>人生超市 - 會員入口</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,31 +15,34 @@
 <body>
     <div class="app-sandbox">
         <div id="home-view" class="layer-visual">
-            <img src="Vector 1.png" class="top-green-banner">
-            <img src="謝謝光臨橫幅.png" class="thanks-banner">
-            <img src="請支援收銀.png" class="cashier-sticker">
-            <img src="大標題.png" class="main-title-img">
-            <img src="會員卡.png" class="membership-card-bg">
-            <img src="離職集點卡.png" class="resignation-card">
-            <img src="交易明細.png" class="receipt-paper">
-            <img src="熱賣商品.png" class="hot-item-tag">
-            <img src="特價中2025.png" class="sale-2025-sticker">
+            <img src="Vector 1.png" class="top-green-banner" alt="頂部裝飾條">
+            <img src="謝謝光臨橫幅.png" class="thanks-banner" alt="謝謝光臨">
+            <img src="請支援收銀.png" class="cashier-sticker" alt="請支援收銀貼紙">
+            <img src="大標題.png" class="main-title-img" alt="人生超市大標題">
+            <img src="會員卡.png" class="membership-card-bg" alt="會員卡背景">
+            <img src="離職集點卡.png" class="resignation-card" alt="離職集點卡">
+            <img src="交易明細.png" class="receipt-paper" alt="交易明細">
+            <img src="熱賣商品.png" class="hot-item-tag" alt="熱賣商品標籤">
+            <img src="特價中2025.png" class="sale-2025-sticker" alt="2025特價中">
 
-            <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
+            <img src="開始結帳.png" class="checkout-btn" id="btn-checkout" alt="開始結帳按鈕">
         </div>
 
-        <div id="menu-view" class="layer-visual" style="display: none; background: var(--market-bg); flex-direction: column; align-items: center; z-index: 100;">
+        <div id="menu-view" class="layer-visual"
+            style="display: none; background: var(--market-bg); flex-direction: column; align-items: center; z-index: 100;">
             <div class="menu-header" style="text-align: center; padding-top: 50px; width: 100%;">
-                <div id="btn-back-to-home" class="user-badge" style="background: white; color: var(--brand-red); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 10px; cursor: pointer;">
+                <div id="btn-back-to-home" class="user-badge"
+                    style="background: white; color: var(--brand-red); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 10px; cursor: pointer;">
                     <span id="display-member-name">貴賓</span> 會員 (重新辦卡)
                 </div>
-                
+
                 <h2 style="color: white; margin-top: 10px;">人生超市選單</h2>
                 <p style="color: white; opacity: 0.9;">請選擇編輯區</p>
             </div>
-            
-            <div class="menu-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px; padding: 20px; width: 100%; justify-items: center;">
-                <div class="menu-item" onclick="navigateTo('hot-food')">
+
+            <div class="menu-grid"
+                style="display: grid; grid-template-columns: 1fr; gap: 30px; padding: 20px; width: 100%; justify-items: center;">
+                <div class="menu-item" data-action="hot-food">
                     <div class="item-circle"></div>
                     <span>年度 Dump</span>
                 </div>
@@ -64,7 +69,7 @@
                 <h2 style="margin-bottom: 5px; color: #cb132d;">製作會員卡</h2>
 
                 <div id="modal-editor-area" class="preview-card-container">
-                    <img src="會員卡.png" class="preview-card-bg">
+                    <img src="會員卡.png" class="preview-card-bg" alt="預覽會員卡背景">
 
                     <div class="upload-container-modal">
                         <div class="upload-zone" id="upload-zone">
