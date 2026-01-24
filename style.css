@@ -1,5 +1,5 @@
 /**
- * 人生超市 - 核心樣式表 (手機相容優化與視覺統一版)
+ * 人生超市 - 核心樣式表 (手機相容終極整合版)
  */
 
 /* --- 1. 核心變數與基礎設定 --- */
@@ -173,7 +173,7 @@ img {
     white-space: nowrap;
 }
 
-/* --- 6. 彈窗與照片裁切修正 --- */
+/* --- 6. 彈窗與照片裁切 --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -221,14 +221,16 @@ img {
     z-index: 10;
 }
 
-/* 修正：手機端虛線強化 */
+/* 【手機相容優化：上傳框區域】 */
 .upload-zone {
-    width: 100%;
-    height: 100%;
-    border: 1.5px dashed var(--placeholder-gray) !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 60px !important;  /* 強制給予物理寬度 */
+    min-height: 80px !important; /* 強制給予物理高度 */
+    border: 2px dashed var(--placeholder-gray) !important; /* 加粗虛線 */
     position: relative;
     cursor: pointer;
-    overflow: hidden;
+    overflow: visible !important; /* 確保內容不會被切掉 */
     background: #fcfcfc;
     display: flex !important;
     align-items: center;
@@ -237,7 +239,7 @@ img {
 
 .upload-container-modal.has-photo .upload-zone {
     border: none !important;
-    background: transparent;
+    background: transparent !important;
 }
 
 .upload-tip {
@@ -254,6 +256,7 @@ img {
     pointer-events: none;
 }
 
+/* 【手機相容優化：裁切容器】 */
 #cropper-container {
     width: 100% !important;
     height: 100% !important;
@@ -261,10 +264,10 @@ img {
     top: 0;
     left: 0;
     z-index: 2;
-    touch-action: none; /* 防止手機拖動時跟頁面滾動衝突 */
+    touch-action: none; /* 防止手機拖拽干擾頁面滾動 */
 }
 
-/* --- 7. 姓名輸入框優化 --- */
+/* --- 7. 姓名輸入框 --- */
 .name-input-modal {
     position: absolute;
     top: 52%;
@@ -300,7 +303,7 @@ img {
     font-weight: normal;
 }
 
-/* --- 8. 按鈕與其餘元件 --- */
+/* --- 8. 按鈕與 Croppie 內部修正 --- */
 #confirm-generate {
     background: var(--brand-red);
     color: white;
@@ -325,7 +328,12 @@ img {
     text-decoration: underline;
 }
 
-/* Croppie 插件內部視覺修正 */
-.cr-boundary { width: 100% !important; height: 100% !important; border: none; }
+.cr-boundary { 
+    width: 100% !important; 
+    height: 100% !important; 
+    border: none; 
+    min-width: 60px !important;
+    min-height: 80px !important;
+}
 .cr-viewport { border: none !important; box-shadow: none !important; }
 .cr-slider-wrap { display: none !important; }
