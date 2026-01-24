@@ -1,5 +1,5 @@
 /**
- * 人生超市 - 會員系統核心邏輯 (終極相容整合版)
+ * 人生超市 - 會員系統核心邏輯 (同步渲染穩定版)
  */
 document.addEventListener('DOMContentLoaded', () => {
     const elements = {
@@ -22,38 +22,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let cropperInstance = null;
 
     function initCropper(imageSrc) {
+        // 1. 清理舊實例
         if (cropperInstance) {
             cropperInstance.destroy();
             elements.cropperContainer.innerHTML = '';
         }
 
-        // 暴力破解 1：強制延遲執行，確保手機 DOM 已經完成渲染
-        setTimeout(() => {
-            let zoneW = elements.uploadZone.clientWidth;
-            let zoneH = elements.uploadZone.clientHeight;
+        // 2. 核心修正：強制瀏覽器重繪，確認容器寬高
+        const w = elements.uploadZone.offsetWidth;
+        const h = elements.uploadZone.offsetHeight;
 
-            // 暴力破解 2：如果還是抓不到，給予固定數值 (根據你設計稿的比例)
-            if (zoneW <= 0) zoneW = 80;
-            if (zoneH <= 0) zoneH = 110;
+        // 3. 立即初始化，不再使用 setTimeout
+        cropperInstance = new Croppie(elements.cropperContainer, {
+            viewport: { width: w - 2, height: h - 2, type: 'square' },
+            boundary: { width: w, height: h },
+            showZoomer: false,
+            enableOrientation: true,
+            enableZoom: true,
+            mouseWheelZoom: true,
+            enforceBoundary: false
+        });
 
-            cropperInstance = new Croppie(elements.cropperContainer, {
-                viewport: { width: zoneW - 4, height: zoneH - 4, type: 'square' },
-                boundary: { width: zoneW, height: zoneH },
-                showZoomer: false,
-                enableOrientation: true,
-                mouseWheelZoom: true,
-                enableZoom: true,
-                enforceBoundary: false
-            });
-
-            cropperInstance.bind({
-                url: imageSrc,
-                zoom: 0
-            }).then(() => {
-                // 暴力破解 3：綁定後再次確認縮放
-                setTimeout(() => cropperInstance.setZoom(0), 50);
-            });
-        }, 100); 
+        // 4. 綁定圖片
+        cropperInstance.bind({
+            url: imageSrc,
+            zoom: 0
+        }).then(() => {
+            // 綁定成功後再次微調，解決手機端首幀不顯示問題
+            cropperInstance.setZoom(0);
+        });
     }
 
     function resetUploader() {
@@ -62,11 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
             cropperInstance = null;
         }
         elements.cropperContainer.innerHTML = '';
-        elements.uploadText.style.display = 'block';
-        elements.uploadContainer.classList.remove('has-photo');
+        if (elements.uploadText) elements.uploadText.style.display = 'block';
+        if (elements.uploadContainer) elements.uploadContainer.classList.remove('has-photo');
         elements.fileInput.value = '';
     }
 
+    // 事件監聽邏輯
     if (elements.btnCheckout) {
         elements.btnCheckout.addEventListener('click', () => {
             elements.modal.style.display = 'flex';
@@ -89,14 +87,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                elements.uploadText.style.display = 'none';
-                elements.uploadContainer.classList.add('has-photo');
+                // 先切換 CSS 狀態，再初始化裁切器
+                if (elements.uploadText) elements.uploadText.style.display = 'none';
+                if (elements.uploadContainer) elements.uploadContainer.classList.add('has-photo');
                 initCropper(event.target.result);
             };
             reader.readAsDataURL(file);
         }
     });
 
+    // 確認製作
     elements.btnConfirm.addEventListener('click', async () => {
         const name = elements.nameInput.value.trim();
         if (!name) return alert('請輸入會員姓名');
@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
-
             if (elements.displayName) elements.displayName.textContent = name;
 
             elements.modal.style.display = 'none';
@@ -123,13 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.menuView) elements.menuView.style.display = 'flex';
 
         } catch (err) {
-            alert("照片處理出錯");
+            console.error(err);
+            alert("處理出錯");
         } finally {
             elements.btnConfirm.textContent = "確認製作並進店";
             elements.btnConfirm.disabled = false;
         }
     });
 
+    // 重新辦卡
     if (elements.btnBackToHome) {
         elements.btnBackToHome.addEventListener('click', () => {
             if (confirm('確定要重新辦卡嗎？')) {
@@ -141,7 +142,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-function navigateTo(pageId) {
-    alert(`歡迎來到【${pageId}】！`);
-}
