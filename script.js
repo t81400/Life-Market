@@ -1,158 +1,148 @@
 /**
- * 人生超市 - 會員系統核心邏輯 (整合修正版)
+ * 人生超市 - 會員系統核心邏輯 (先進架構優化版)
  */
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. 元件宣告 ---
-    const fileInput = document.getElementById('file-input');
-    const uploadZone = document.getElementById('upload-zone');
-    const uploadText = document.getElementById('upload-text');
-    const cropperContainer = document.getElementById('cropper-container');
-    const uploadContainer = document.querySelector('.upload-container-modal');
-    
-    const btnCheckout = document.getElementById('btn-checkout');
-    const modal = document.getElementById('edit-modal');
-    const btnConfirm = document.getElementById('confirm-generate');
-    const btnCancel = document.getElementById('cancel-edit');
-    const memberNameInputModal = document.getElementById('member-name-modal');
-    
-    // 視圖切換元件
-    const homeView = document.querySelector('.layer-visual'); // 修正：首頁主要視覺層
-    const menuView = document.getElementById('menu-view');
-    const displayMemberName = document.getElementById('display-member-name');
-    
-    // Header 上的「重新辦卡」按鈕 (HTML ID 應為 btn-back-to-home 或對應 class)
-    const btnBackToHome = document.getElementById('btn-back-to-home') || document.querySelector('.user-badge');
+    const elements = {
+        fileInput: document.getElementById('file-input'),
+        uploadZone: document.getElementById('upload-zone'),
+        uploadText: document.getElementById('upload-text'),
+        cropperContainer: document.getElementById('cropper-container'),
+        uploadContainer: document.querySelector('.upload-container-modal'),
+        btnCheckout: document.getElementById('btn-checkout'),
+        modal: document.getElementById('edit-modal'),
+        btnConfirm: document.getElementById('confirm-generate'),
+        btnCancel: document.getElementById('cancel-edit'),
+        nameInput: document.getElementById('member-name-modal'),
+        homeView: document.querySelector('.layer-visual'),
+        menuView: document.getElementById('menu-view'),
+        displayName: document.getElementById('display-member-name'),
+        btnBackToHome: document.getElementById('btn-back-to-home') || document.querySelector('.user-badge')
+    };
 
     let cropperInstance = null;
 
-    // --- 關鍵修正：封裝統一的重置清理函式 ---
+    // --- 2. 核心邏輯：圖片裁切初始化 ---
+    function initCropper(imageSrc) {
+        // 先清理舊實例
+        if (cropperInstance) {
+            cropperInstance.destroy();
+            elements.cropperContainer.innerHTML = '';
+        }
+
+        const zoneW = elements.uploadZone.offsetWidth;
+        const zoneH = elements.uploadZone.offsetHeight;
+
+        // 初始化 Croppie (解鎖自由模式)
+        cropperInstance = new Croppie(elements.cropperContainer, {
+            viewport: { width: zoneW, height: zoneH, type: 'square' },
+            boundary: { width: zoneW, height: zoneH },
+            showZoomer: false,
+            enableOrientation: true,
+            mouseWheelZoom: true,
+            enableZoom: true,
+            enforceBoundary: false, // 關鍵：允許照片自由拖動超出邊框
+            enableKeyGrid: true     // 增加裁切對齊感
+        });
+
+        cropperInstance.bind({
+            url: imageSrc,
+            zoom: 0
+        });
+    }
+
+    // --- 3. 核心邏輯：重置上傳狀態 ---
     function resetUploader() {
-        // 1. 銷毀 Croppie 實例
         if (cropperInstance) {
             cropperInstance.destroy();
             cropperInstance = null;
         }
-        // 2. 徹底清空容器內容，避免 DOM 殘留導致樣式跑掉
-        if (cropperContainer) {
-            cropperContainer.innerHTML = ''; 
-        }
-        // 3. 還原文字顯示與容器樣式 (配合 CSS 絕對定位)
-        if (uploadText) {
-            uploadText.style.display = 'block'; 
-        }
-        if (uploadContainer) {
-            uploadContainer.classList.remove('has-photo');
-        }
-        // 4. 清空檔案輸入值，確保同一張照片可連續重複選取
-        fileInput.value = '';
+        if (elements.cropperContainer) elements.cropperContainer.innerHTML = '';
+        if (elements.uploadText) elements.uploadText.style.display = 'block';
+        if (elements.uploadContainer) elements.uploadContainer.classList.remove('has-photo');
+        elements.fileInput.value = '';
     }
 
-    // --- 2. 彈窗顯示/隱藏 ---
-    if (btnCheckout) {
-        btnCheckout.addEventListener('click', () => {
-            modal.style.display = 'flex';
+    // --- 4. 事件監聽 ---
+
+    // 啟動彈窗
+    if (elements.btnCheckout) {
+        elements.btnCheckout.addEventListener('click', () => {
+            elements.modal.style.display = 'flex';
             resetUploader();
         });
     }
 
-    if (btnCancel) {
-        btnCancel.addEventListener('click', () => {
-            modal.style.display = 'none';
+    // 取消編輯
+    if (elements.btnCancel) {
+        elements.btnCancel.addEventListener('click', () => {
+            elements.modal.style.display = 'none';
         });
     }
 
-    // --- 3. 照片上傳與裁切初始化 ---
-    if (uploadZone) {
-        uploadZone.addEventListener('click', () => fileInput.click());
+    // 觸發檔案選擇
+    if (elements.uploadZone) {
+        elements.uploadZone.addEventListener('click', () => elements.fileInput.click());
     }
 
-    fileInput.addEventListener('change', (e) => {
+    // 檔案選取處理
+    elements.fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                // 隱藏提示文字並標記已上傳
-                if (uploadText) uploadText.style.display = 'none';
-                if (uploadContainer) uploadContainer.classList.add('has-photo');
-                
-                // 初始化裁切器
-                if (cropperInstance) {
-                    cropperInstance.destroy();
-                    cropperContainer.innerHTML = '';
-                }
-                
-                // 取得目前顯示區域大小作為裁切標準
-                const zoneW = uploadZone.offsetWidth;
-                const zoneH = uploadZone.offsetHeight;
-                
-                cropperInstance = new Croppie(cropperContainer, {
-                    viewport: { width: zoneW, height: zoneH, type: 'square' },
-                    boundary: { width: zoneW, height: zoneH },
-                    showZoomer: false,
-                    enableOrientation: true,
-                    mouseWheelZoom: true
-                });
-                
-                cropperInstance.bind({
-                    url: event.target.result,
-                    zoom: 0
-                });
+                if (elements.uploadText) elements.uploadText.style.display = 'none';
+                if (elements.uploadContainer) elements.uploadContainer.classList.add('has-photo');
+                initCropper(event.target.result);
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // --- 4. 確認製作並進入選單 ---
-    btnConfirm.addEventListener('click', async () => {
-        const name = memberNameInputModal.value.trim();
-        
-        if (!name) { alert('請輸入會員姓名'); return; }
-        if (!cropperInstance) { alert('請先點擊方框上傳照片'); return; }
+    // 確認製作
+    elements.btnConfirm.addEventListener('click', async () => {
+        const name = elements.nameInput.value.trim();
+        if (!name) return alert('請輸入會員姓名');
+        if (!cropperInstance) return alert('請先上傳照片');
 
-        btnConfirm.textContent = "製作中...";
-        btnConfirm.disabled = true;
+        elements.btnConfirm.textContent = "製作中...";
+        elements.btnConfirm.disabled = true;
 
         try {
             const croppedPhoto = await cropperInstance.result({
                 type: 'base64',
-                size: 'viewport', 
+                size: 'viewport',
                 format: 'png',
                 quality: 1
             });
 
-            // 儲存資訊到 localStorage (供後續功能調用)
+            // 儲存數據
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
 
-            // 更新選單頁面的姓名顯示
-            if (displayMemberName) {
-                displayMemberName.textContent = name;
-            }
+            if (elements.displayName) elements.displayName.textContent = name;
 
             // 切換視圖
-            modal.style.display = 'none';
-            if (homeView) homeView.style.display = 'none';
-            if (menuView) menuView.style.display = 'flex';
+            elements.modal.style.display = 'none';
+            if (elements.homeView) elements.homeView.style.display = 'none';
+            if (elements.menuView) elements.menuView.style.display = 'flex';
 
         } catch (err) {
             console.error("製作失敗:", err);
             alert("照片處理出錯");
         } finally {
-            btnConfirm.textContent = "確認製作並進店";
-            btnConfirm.disabled = false;
+            elements.btnConfirm.textContent = "確認製作並進店";
+            elements.btnConfirm.disabled = false;
         }
     });
 
-    // --- 5. 返回首頁功能 (重新辦卡) ---
-    if (btnBackToHome) {
-        btnBackToHome.addEventListener('click', () => {
+    // 重新辦卡
+    if (elements.btnBackToHome) {
+        elements.btnBackToHome.addEventListener('click', () => {
             if (confirm('確定要重新辦卡嗎？目前進度將不會保留。')) {
-                // 1. 切換視圖回到首頁
-                if (menuView) menuView.style.display = 'none';
-                if (homeView) homeView.style.display = 'block';
-                
-                // 2. 清空輸入狀態與重置裁切器
-                memberNameInputModal.value = '';
+                if (elements.menuView) elements.menuView.style.display = 'none';
+                if (elements.homeView) elements.homeView.style.display = 'block';
+                elements.nameInput.value = '';
                 resetUploader();
             }
         });
@@ -160,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * 選單跳轉功能：由 HTML onclick="navigateTo('hot-food')" 調用
+ * 選單跳轉功能
  */
 function navigateTo(pageId) {
     const targetName = pageId === 'hot-food' ? '熱食區 (年度Dump)' : pageId;
