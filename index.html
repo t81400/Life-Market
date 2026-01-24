@@ -26,16 +26,17 @@
             <img src="開始結帳.png" class="checkout-btn" id="btn-checkout">
         </div>
 
-        <div id="menu-view" class="layer-visual" style="display: none;">
-            <div class="menu-header">
-                <div id="btn-back-to-home" class="user-badge">
+        <div id="menu-view" class="layer-visual" style="display: none; background: var(--market-bg); flex-direction: column; align-items: center; z-index: 100;">
+            <div class="menu-header" style="text-align: center; padding-top: 50px; width: 100%;">
+                <div id="btn-back-to-home" class="user-badge" style="background: white; color: var(--brand-red); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 10px; cursor: pointer;">
                     <span id="display-member-name">貴賓</span> 會員 (重新辦卡)
                 </div>
+                
                 <h2 style="color: white; margin-top: 10px;">人生超市選單</h2>
                 <p style="color: white; opacity: 0.9;">請選擇編輯區</p>
             </div>
             
-            <div class="menu-grid">
+            <div class="menu-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px; padding: 20px; width: 100%; justify-items: center;">
                 <div class="menu-item" onclick="navigateTo('hot-food')">
                     <div class="item-circle"></div>
                     <span>年度 Dump</span>
@@ -58,7 +59,7 @@
             </div>
         </div>
 
-        <div id="edit-modal" class="modal-overlay">
+        <div id="edit-modal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <h2 style="margin-bottom: 5px; color: #cb132d;">製作會員卡</h2>
 
@@ -73,8 +74,8 @@
                     </div>
 
                     <div class="name-input-modal">
-                        <span class="modal-label">姓名：</span>
-                        <input type="text" id="member-name-modal" class="name-field-modal" placeholder="點擊輸入" autocomplete="off">
+                        <span class="modal-label">會員姓名：</span>
+                        <input type="text" id="member-name-modal" class="name-field-modal" placeholder="點擊輸入">
                     </div>
                 </div>
 
