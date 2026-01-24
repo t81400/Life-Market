@@ -238,7 +238,7 @@ img {
     left: 50%;
     transform: translate(-50%, -50%); /* 幾何上的絕對置中 */
     font-size: 11px;
-    color: #666;
+    color: #bbb;
     font-weight: bold;
     z-index: 5;
     text-align: center;
