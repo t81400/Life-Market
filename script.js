@@ -1,5 +1,5 @@
 /**
- * 人生超市 - 會員系統核心邏輯 (先進架構優化版)
+ * 人生超市 - 會員系統核心邏輯 (手機端相容優化版)
  */
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. 元件宣告 ---
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let cropperInstance = null;
 
-    // --- 2. 核心邏輯：圖片裁切初始化 ---
+    // --- 2. 核心邏輯：圖片裁切初始化 (針對手機端強化) ---
     function initCropper(imageSrc) {
         // 先清理舊實例
         if (cropperInstance) {
@@ -30,24 +30,42 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.cropperContainer.innerHTML = '';
         }
 
-        const zoneW = elements.uploadZone.offsetWidth;
-        const zoneH = elements.uploadZone.offsetHeight;
+        // 手機端修正：如果 offsetWidth 抓到 0 (常見於動畫中)，給予保險值
+        let zoneW = elements.uploadZone.offsetWidth;
+        let zoneH = elements.uploadZone.offsetHeight;
+
+        if (zoneW <= 0 || zoneH <= 0) {
+            // 根據容器比例估算保險寬高
+            zoneW = elements.uploadContainer.clientWidth * 0.22; 
+            zoneH = elements.uploadContainer.clientHeight * 0.44;
+        }
 
         // 初始化 Croppie (解鎖自由模式)
         cropperInstance = new Croppie(elements.cropperContainer, {
-            viewport: { width: zoneW, height: zoneH, type: 'square' },
-            boundary: { width: zoneW, height: zoneH },
+            viewport: { 
+                width: zoneW > 4 ? zoneW - 4 : 80, 
+                height: zoneH > 4 ? zoneH - 4 : 110, 
+                type: 'square' 
+            },
+            boundary: { 
+                width: zoneW > 0 ? zoneW : 82, 
+                height: zoneH > 0 ? zoneH : 112 
+            },
             showZoomer: false,
             enableOrientation: true,
             mouseWheelZoom: true,
             enableZoom: true,
-            enforceBoundary: false, // 關鍵：允許照片自由拖動超出邊框
-            enableKeyGrid: true     // 增加裁切對齊感
+            enforceBoundary: false, // 允許照片自由拖動
+            enableKeyGrid: false    // 手機端關閉網格以增進效能
         });
 
+        // 確保圖片載入成功後才顯示，並強制重繪一次解決手機白屏
         cropperInstance.bind({
             url: imageSrc,
             zoom: 0
+        }).then(() => {
+            console.log("手機端圖片綁定成功");
+            cropperInstance.setZoom(0); // 強制觸發渲染
         });
     }
 
@@ -116,13 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 quality: 1
             });
 
-            // 儲存數據
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
 
             if (elements.displayName) elements.displayName.textContent = name;
 
-            // 切換視圖
             elements.modal.style.display = 'none';
             if (elements.homeView) elements.homeView.style.display = 'none';
             if (elements.menuView) elements.menuView.style.display = 'flex';
