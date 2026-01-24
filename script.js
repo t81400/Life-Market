@@ -15,12 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancel = document.getElementById('cancel-edit');
     const memberNameInputModal = document.getElementById('member-name-modal');
     
-    const homeView = document.getElementById('home-view');
+    // 視圖切換元件
+    const homeView = document.querySelector('.layer-visual'); // 修正：首頁主要視覺層
     const menuView = document.getElementById('menu-view');
     const displayMemberName = document.getElementById('display-member-name');
     
-    // 對應新 HTML 結構中，位於 Header 的重新辦卡按鈕
-    const btnBackToHome = document.getElementById('btn-back-to-home');
+    // Header 上的「重新辦卡」按鈕 (HTML ID 應為 btn-back-to-home 或對應 class)
+    const btnBackToHome = document.getElementById('btn-back-to-home') || document.querySelector('.user-badge');
 
     let cropperInstance = null;
 
@@ -31,34 +32,39 @@ document.addEventListener('DOMContentLoaded', () => {
             cropperInstance.destroy();
             cropperInstance = null;
         }
-        // 2. 徹底清空容器內容 (解決文字跑掉的關鍵)
+        // 2. 徹底清空容器內容，避免 DOM 殘留導致樣式跑掉
         if (cropperContainer) {
             cropperContainer.innerHTML = ''; 
         }
-        // 3. 還原文字顯示與容器樣式
+        // 3. 還原文字顯示與容器樣式 (配合 CSS 絕對定位)
         if (uploadText) {
-            uploadText.style.display = 'flex';
+            uploadText.style.display = 'block'; 
         }
         if (uploadContainer) {
             uploadContainer.classList.remove('has-photo');
         }
-        // 4. 清空檔案輸入值
+        // 4. 清空檔案輸入值，確保同一張照片可連續重複選取
         fileInput.value = '';
     }
 
     // --- 2. 彈窗顯示/隱藏 ---
-    btnCheckout.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        // 開啟時呼叫清理邏輯，確保提示文字在正中央
-        resetUploader();
-    });
+    if (btnCheckout) {
+        btnCheckout.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            resetUploader();
+        });
+    }
 
-    btnCancel.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+    if (btnCancel) {
+        btnCancel.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
 
     // --- 3. 照片上傳與裁切初始化 ---
-    uploadZone.addEventListener('click', () => fileInput.click());
+    if (uploadZone) {
+        uploadZone.addEventListener('click', () => fileInput.click());
+    }
 
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -69,12 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (uploadText) uploadText.style.display = 'none';
                 if (uploadContainer) uploadContainer.classList.add('has-photo');
                 
-                // 重新初始化前先清理
+                // 初始化裁切器
                 if (cropperInstance) {
                     cropperInstance.destroy();
                     cropperContainer.innerHTML = '';
                 }
                 
+                // 取得目前顯示區域大小作為裁切標準
                 const zoneW = uploadZone.offsetWidth;
                 const zoneH = uploadZone.offsetHeight;
                 
@@ -113,10 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 quality: 1
             });
 
-            // 儲存資訊
+            // 儲存資訊到 localStorage (供後續功能調用)
             localStorage.setItem('member_name', name);
             localStorage.setItem('member_photo', croppedPhoto);
 
+            // 更新選單頁面的姓名顯示
             if (displayMemberName) {
                 displayMemberName.textContent = name;
             }
@@ -135,18 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 5. 返回首頁功能 (重新辦卡按鈕邏輯) ---
+    // --- 5. 返回首頁功能 (重新辦卡) ---
     if (btnBackToHome) {
         btnBackToHome.addEventListener('click', () => {
             if (confirm('確定要重新辦卡嗎？目前進度將不會保留。')) {
                 // 1. 切換視圖回到首頁
                 if (menuView) menuView.style.display = 'none';
-                if (homeView) homeView.style.display = 'flex';
+                if (homeView) homeView.style.display = 'block';
                 
-                // 2. 清空所有輸入狀態
+                // 2. 清空輸入狀態與重置裁切器
                 memberNameInputModal.value = '';
-                
-                // 3. 呼叫核心清理邏輯，確保下次打開彈窗時文字不跑位
                 resetUploader();
             }
         });
@@ -154,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * 選單跳轉功能
+ * 選單跳轉功能：由 HTML onclick="navigateTo('hot-food')" 調用
  */
 function navigateTo(pageId) {
     const targetName = pageId === 'hot-food' ? '熱食區 (年度Dump)' : pageId;
