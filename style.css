@@ -1,7 +1,12 @@
+/**
+ * 人生超市 - 核心樣式表 (手機相容優化與視覺統一版)
+ */
+
 /* --- 1. 核心變數與基礎設定 --- */
 :root {
     --market-bg: rgb(217, 131, 164);
     --brand-red: rgb(203, 19, 45);
+    --placeholder-gray: #bbb; /* 統一淺灰色變數 */
 }
 
 * {
@@ -18,7 +23,7 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    font-family: -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .app-sandbox {
@@ -216,34 +221,37 @@ img {
     z-index: 10;
 }
 
+/* 修正：手機端虛線強化 */
 .upload-zone {
     width: 100%;
     height: 100%;
-    border: 1.5px dashed #ccc;
-    position: relative; /* 關鍵：讓提示文字絕對定位參考此處 */
+    border: 1.5px dashed var(--placeholder-gray) !important;
+    position: relative;
     cursor: pointer;
     overflow: hidden;
     background: #fcfcfc;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-container-modal.has-photo .upload-zone {
-    border: none;
+    border: none !important;
     background: transparent;
 }
 
-/* 【修正：文字精準置中】 */
 .upload-tip {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* 幾何上的絕對置中 */
+    transform: translate(-50%, -50%);
     font-size: 11px;
-    color: #bbb;
+    color: var(--placeholder-gray);
     font-weight: bold;
     z-index: 5;
     text-align: center;
     width: 100%;
-    pointer-events: none; /* 防止點擊文字沒反應 */
+    pointer-events: none;
 }
 
 #cropper-container {
@@ -253,6 +261,7 @@ img {
     top: 0;
     left: 0;
     z-index: 2;
+    touch-action: none; /* 防止手機拖動時跟頁面滾動衝突 */
 }
 
 /* --- 7. 姓名輸入框優化 --- */
@@ -287,7 +296,7 @@ img {
 }
 
 .name-field-modal::placeholder {
-    color: #bbb;
+    color: var(--placeholder-gray);
     font-weight: normal;
 }
 
@@ -316,7 +325,7 @@ img {
     text-decoration: underline;
 }
 
-/* Croppie 視覺修正 */
-.cr-boundary { width: 100% !important; height: 100% !important; }
+/* Croppie 插件內部視覺修正 */
+.cr-boundary { width: 100% !important; height: 100% !important; border: none; }
 .cr-viewport { border: none !important; box-shadow: none !important; }
 .cr-slider-wrap { display: none !important; }
