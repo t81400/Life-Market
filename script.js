@@ -96,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!name) { alert('請輸入會員姓名'); return; }
         if (!cropperInstance) { alert('請先點擊方框上傳照片'); return; }
 
+        const cropperData = await cropperInstance.get();
+        if (!cropperData.points) { alert('圖片載入中，請稍候再試'); return; }
+
         btnConfirm.textContent = "製作中...";
         btnConfirm.disabled = true;
 
