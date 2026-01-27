@@ -63,25 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (uploadText) uploadText.style.display = 'none';
                 if (uploadContainer) uploadContainer.classList.add('has-photo');
 
-                if (cropperInstance) {
-                    cropperInstance.destroy();
-                    cropperContainer.innerHTML = '';
-                }
+                requestAnimationFrame(() => {
+                    if (cropperInstance) {
+                        cropperInstance.destroy();
+                        cropperContainer.innerHTML = '';
+                    }
 
-                const zoneW = uploadZone.offsetWidth;
-                const zoneH = uploadZone.offsetHeight;
+                    const zoneW = uploadZone.offsetWidth || 80;
+                    const zoneH = uploadZone.offsetHeight || 110;
 
-                cropperInstance = new Croppie(cropperContainer, {
-                    viewport: { width: zoneW, height: zoneH, type: 'square' },
-                    boundary: { width: zoneW, height: zoneH },
-                    showZoomer: false,
-                    enableOrientation: true,
-                    mouseWheelZoom: true
-                });
+                    cropperInstance = new Croppie(cropperContainer, {
+                        viewport: { width: zoneW - 4, height: zoneH - 4, type: 'square' },
+                        boundary: { width: zoneW, height: zoneH },
+                        showZoomer: false,
+                        enableOrientation: true,
+                        mouseWheelZoom: true
+                    });
 
-                cropperInstance.bind({
-                    url: event.target.result,
-                    zoom: 0
+                    cropperInstance.bind({
+                        url: event.target.result,
+                        zoom: 0
+                    });
                 });
             };
             reader.readAsDataURL(file);
