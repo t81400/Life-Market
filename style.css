@@ -34,12 +34,6 @@ body {
 .layer-overlay {
     position: absolute;
     inset: 0;
-    display: none; /* 預設隱藏，由 JS 控制顯示 */
-}
-
-/* 讓首頁預設顯示 */
-#home-view {
-    display: block;
 }
 
 img {
@@ -47,7 +41,6 @@ img {
     pointer-events: none;
 }
 
-/* 跑馬燈 */
 .marquee-banner {
     position: absolute;
     left: 0;
@@ -76,34 +69,81 @@ img {
 }
 
 @keyframes marquee-run {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-/* 首頁裝飾元素定位 */
-.top-green-banner { top: 31px; width: 100%; z-index: 2; }
-.thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
+.top-green-banner {
+    top: 31px;
+    width: 100%;
+    z-index: 2;
+}
+
+.thanks-banner {
+    top: 8%;
+    right: -3.7%;
+    width: 103%;
+    z-index: 3;
+}
+
 .cashier-sticker {
-    top: 6.8%; left: 1%; width: 33%; z-index: 25;
+    top: 6.8%;
+    left: 1%;
+    width: 33%;
+    z-index: 25;
     transform: rotate(-1deg);
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
 }
-.main-title-img { top: 26.75%; left: 51.5%; transform: translateX(-50%); width: 90%; z-index: 5; }
 
-/* 修正：首頁會員卡底圖偏移 */
+.main-title-img {
+    top: 26.75%;
+    left: 51.5%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 5;
+}
+
 .membership-card-bg {
     top: 44%;
-    left: 50%; /* 修正為正中 */
+    left: 50.75%;
     transform: translateX(-50%);
-    width: 86%; /* 稍微加寬 1% 確保覆蓋感 */
+    width: 85%;
     z-index: 6;
-    border-radius: 12px; /* 同步 Figma 的 R 角 */
 }
 
-.sale-2025-sticker { top: 68.3%; left: 28.5%; width: 33%; z-index: 30; transform: rotate(-4deg); }
-.receipt-paper { bottom: 5%; left: -8%; width: 45%; z-index: 30; }
-.resignation-card { bottom: 6.8%; left: 26.5%; width: 33.5%; z-index: 12; }
-.hot-item-tag { bottom: 11%; right: 2%; width: 40%; z-index: 10; }
+.sale-2025-sticker {
+    top: 68.3%;
+    left: 28.5%;
+    width: 33%;
+    z-index: 30;
+    transform: rotate(-4deg);
+}
+
+.receipt-paper {
+    bottom: 5%;
+    left: -8%;
+    width: 45%;
+    z-index: 30;
+}
+
+.resignation-card {
+    bottom: 6.8%;
+    left: 26.5%;
+    width: 33.5%;
+    z-index: 12;
+}
+
+.hot-item-tag {
+    bottom: 11%;
+    right: 2%;
+    width: 40%;
+    z-index: 10;
+}
 
 .checkout-btn {
     position: absolute;
@@ -115,9 +155,11 @@ img {
     pointer-events: auto;
     transition: transform 0.1s;
 }
-.checkout-btn:active { transform: scale(0.92); }
 
-/* 菜單視圖 */
+.checkout-btn:active {
+    transform: scale(0.92);
+}
+
 #menu-view {
     z-index: 500;
     background: var(--market-bg);
@@ -125,20 +167,67 @@ img {
     align-items: center;
 }
 
-.menu-header { text-align: center; padding: 80px 20px 30px; color: white; }
-.user-badge {
-    background: white; color: var(--brand-red);
-    padding: 8px 20px; border-radius: 50px;
-    font-weight: 900; display: inline-block;
-    margin-bottom: 10px; cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.menu-header {
+    text-align: center;
+    padding: 80px 20px 30px;
+    color: white;
 }
 
-.menu-grid { display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 20px; width: 100%; }
-.item-circle { width: 90px; height: 90px; background: #e67e22; border-radius: 50%; margin-bottom: 12px; border: 4px solid white; }
-.menu-item span { background: #f1c40f; color: black; font-size: 13px; font-weight: 900; padding: 4px 12px; transform: rotate(-1deg); }
+.user-badge {
+    background: white;
+    color: var(--brand-red);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 900;
+    display: inline-block;
+    margin-bottom: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.1s;
+    border: 2px solid transparent;
+}
 
-/* Modal 彈窗與裁切優化 */
+.user-badge:active {
+    transform: scale(0.95);
+    background: #fdfdfd;
+}
+
+.menu-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    width: 100%;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.item-circle {
+    width: 90px;
+    height: 90px;
+    background: #e67e22;
+    border-radius: 50%;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 0px rgba(0, 0, 0, 0.2);
+    border: 4px solid white;
+}
+
+.menu-item span {
+    background: #f1c40f;
+    color: black;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 4px 12px;
+    transform: rotate(-1deg);
+    white-space: nowrap;
+}
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -157,6 +246,7 @@ img {
     padding: 25px 15px;
     border-radius: 24px;
     text-align: center;
+    transition: transform 0.3s ease;
 }
 
 .preview-card-container {
@@ -165,53 +255,88 @@ img {
     aspect-ratio: 1.58 / 1;
     margin: 20px 0;
     overflow: hidden;
-    background: #eee; /* 墊一個底色防止透明邊緣看穿 */
-    border-radius: 12px;
+    background: transparent;
 }
 
-/* 修正點：背景圖溢出處理，消除 1px 縫隙 */
 .preview-card-bg {
     position: absolute;
-    inset: -1.5px; /* 稍微向外溢出 1.5px */
-    width: calc(100% + 3px);
-    height: calc(100% + 3px);
+    inset: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
-    object-fit: fill; /* 強制填滿，不留空隙 */
+    object-fit: contain;
 }
 
 .upload-container-modal {
     position: absolute;
-    top: 35.5%; /* 微調與 Figma 對齊 */
+    top: 35%;
     left: 12%;
-    width: 22.5%;
-    height: 45%;
+    width: 22%;
+    height: 44.5%;
     z-index: 10;
 }
 
 .upload-zone {
     width: 100% !important;
     height: 100% !important;
-    border: 1px dashed #ccc;
+    min-height: 80px;
+    border: 1.5px dashed #ccc;
     position: relative;
     cursor: pointer;
+    overflow: hidden;
     background: #fcfcfc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-container-modal.has-photo .upload-zone {
     border: none;
     background: transparent;
-    outline: 1px solid white; /* 裁切後的小邊框，可視情況移除 */
 }
 
-/* 名字輸入框位置修正 */
+.upload-tip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11px;
+    color: #bbb;
+    font-weight: bold;
+    z-index: 5;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+}
+
+.upload-container-modal.has-photo .upload-tip {
+    display: none !important;
+}
+
+#cropper-container {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
 .name-input-modal {
     position: absolute;
-    top: 53.5%;
-    left: 41%;
+    top: 52%;
+    left: 40%;
     z-index: 15;
     display: flex;
     align-items: center;
     width: 45%;
+}
+
+.modal-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #000;
+    white-space: nowrap;
 }
 
 .name-field-modal {
@@ -220,15 +345,16 @@ img {
     border-bottom: 1px solid var(--brand-red);
     font-size: 11px;
     font-weight: bold;
+    color: #000;
     width: 100%;
     outline: none;
+    padding: 0;
+    margin-left: 2px;
 }
 
-/* Croppie 遮罩效果增強 */
-.cr-viewport {
-    border: none !important; /* 移除預設邊框避免位移 */
-    outline: 1px solid rgba(255, 255, 255, 0.5); /* 改用 outline 不佔空間 */
-    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.6) !important;
+.name-field-modal::placeholder {
+    color: #bbb;
+    font-weight: normal;
 }
 
 #confirm-generate {
@@ -239,15 +365,32 @@ img {
     width: 100%;
     border-radius: 50px;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(203, 19, 45, 0.3);
 }
 
 #cancel-edit {
     background: none;
     border: none;
     color: #999;
-    margin-top: 10px;
+    margin-top: 12px;
     cursor: pointer;
+    font-size: 14px;
     text-decoration: underline;
+}
+
+.cr-boundary {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.cr-viewport {
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5) !important;
+}
+
+.cr-slider-wrap {
+    display: none !important;
 }
