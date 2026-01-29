@@ -69,15 +69,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         cropperContainer.innerHTML = '';
                     }
 
-                    const zoneW = uploadZone.offsetWidth || 80;
-                    const zoneH = uploadZone.offsetHeight || 110;
+                    // 修正點：使用 getBoundingClientRect 獲取精確寬高，確保與 CSS 完美同步
+                    const rect = uploadZone.getBoundingClientRect();
+                    const zoneW = rect.width;
+                    const zoneH = rect.height;
 
                     cropperInstance = new Croppie(cropperContainer, {
-                        viewport: { width: zoneW - 4, height: zoneH - 4, type: 'square' },
-                        boundary: { width: zoneW, height: zoneH },
+                        // 修正點：移除 -4 偏移，確保照片 1:1 填滿你在 CSS 調好的高度
+                        viewport: { 
+                            width: zoneW, 
+                            height: zoneH, 
+                            type: 'square' 
+                        },
+                        boundary: { 
+                            width: zoneW, 
+                            height: zoneH 
+                        },
                         showZoomer: false,
                         enableOrientation: true,
-                        mouseWheelZoom: true
+                        mouseWheelZoom: true,
+                        enableExif: true // 支援手機照片元數據，防止轉向錯誤
                     });
 
                     cropperInstance.bind({
@@ -105,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const croppedPhoto = await cropperInstance.result({
                 type: 'base64',
-                size: 'viewport',
+                size: 'viewport', // 輸出尺寸與調好的 CSS 框完全一致
                 format: 'png',
                 quality: 1
             });
@@ -114,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('member_name', name);
                 localStorage.setItem('member_photo', croppedPhoto);
             } catch (e) {
-                console.warn("LocalStorage 額度不足或被禁用，僅用於當前顯示", e);
+                console.warn("LocalStorage 額度不足，僅供當前 Session 使用", e);
             }
 
             if (displayMemberName) {
