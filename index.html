@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>人生超市 - 會員入口</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="app-sandbox">
         <div id="home-view" class="layer-visual">
@@ -27,34 +31,53 @@
                 <div id="btn-back-to-home" class="user-badge">
                     <span id="display-member-name">貴賓</span> 會員 (重新辦卡)
                 </div>
-                <h2 class="market-title">人生超市選單</h2>
-                <p class="market-subtitle">請選擇要採購的編輯區</p>
+                <h2 class="market-title">好多事區域選擇</h2>
+                <p class="market-subtitle">WHAT A LIFE - 點擊進入編輯區</p>
             </div>
+
             <div class="menu-grid">
                 <div class="menu-item shelf-tag hot" data-action="hot-food">
-                    <div class="tag-label">熱賣</div>
-                    <div class="tag-content">
-                        <span class="tag-main">年度回憶熟食區</span>
-                        <span class="tag-sub">趁熱把 2025 的瑣事丟進來</span>
+                    <div class="tag-body">
+                        <div class="tag-main-row">
+                            <span class="tag-main">年度回憶熟食區</span>
+                            <span class="tag-price">$ 2025</span>
+                        </div>
+                        <p class="tag-desc">趁熱把 2025 的瑣事丟進來</p>
                     </div>
-                    <div class="tag-price">$ 2025</div>
                 </div>
+
                 <div class="menu-item shelf-tag clearance" data-action="history">
-                    <div class="tag-label">0.1折</div>
-                    <div class="tag-content">
-                        <span class="tag-main">黑歷史出清區</span>
-                        <span class="tag-sub">那些廉價拋售的尷尬瞬間</span>
+                    <div class="tag-body">
+                        <div class="tag-main-row">
+                            <span class="tag-main">黑歷史出清區</span>
+                            <span class="tag-price">$ 0.1</span>
+                        </div>
+                        <p class="tag-desc">廉價拋售那些尷尬瞬間</p>
                     </div>
-                    <div class="tag-price">$ 0.1</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layer-overlay" style="pointer-events: none;">
+            <div class="marquee-banner marquee-top">
+                <div class="marquee-content">
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                </div>
+            </div>
+            <div class="marquee-banner marquee-bottom">
+                <div class="marquee-content">
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
+                    <span>SALE • SALE • SALE • SALE • SALE • SALE • </span>
                 </div>
             </div>
         </div>
 
         <div id="edit-modal" class="modal-overlay">
             <div class="modal-content">
-                <h2 class="modal-title">製作會員卡</h2>
+                <h2 class="modal-title">製作好多事會員卡</h2>
                 <div id="modal-editor-area" class="preview-card-container">
-                    <img src="會員卡.png" class="preview-card-bg" alt="背景">
+                    <img src="會員卡.png" class="preview-card-bg" alt="底圖">
                     
                     <div class="upload-container-modal">
                         <div class="upload-zone" id="upload-zone">
@@ -64,7 +87,8 @@
                     </div>
 
                     <div class="name-input-modal">
-                        <input type="text" id="member-name-modal" class="name-field-modal" placeholder="點擊輸入名字">
+                        <span class="modal-label">姓名：</span>
+                        <input type="text" id="member-name-modal" class="name-field-modal" placeholder="點擊輸入">
                     </div>
                 </div>
                 <div class="modal-actions">
