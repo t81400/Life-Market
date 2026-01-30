@@ -1,16 +1,10 @@
 :root {
+    --wal-blue: #005596;
+    --wal-red: #e31d3b;
     --market-bg: rgb(217, 131, 164);
-    --brand-red: rgb(203, 19, 45);
-    --tag-yellow: #ffeb3b;
-    --dark-text: #333;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
     background-color: #1a1a1a;
@@ -19,10 +13,9 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    font-family: -apple-system, "Noto Sans TC", sans-serif;
+    font-family: -apple-system, sans-serif;
 }
 
-/* 手機容器 */
 .app-sandbox {
     position: relative;
     height: 90vh;
@@ -30,270 +23,77 @@ body {
     background-color: var(--market-bg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     overflow: hidden;
-    contain: content;
 }
 
-.layer-visual,
-.layer-overlay {
-    position: absolute;
-    inset: 0;
-}
-
-img {
-    position: absolute;
-    pointer-events: none;
-}
+.layer-visual, .layer-overlay { position: absolute; inset: 0; }
+img { position: absolute; pointer-events: none; }
 
 /* 跑馬燈 */
 .marquee-banner {
     position: absolute;
-    left: 0;
     width: 100%;
     height: 32px;
-    line-height: 32px;
-    background-color: var(--brand-red);
+    background-color: var(--wal-red);
     color: white;
     overflow: hidden;
     display: flex;
-    align-items: center;
     z-index: 1000;
 }
 .marquee-top { top: 0; }
 .marquee-bottom { bottom: 0; }
+.marquee-content { display: flex; white-space: nowrap; animation: marquee-run 15s linear infinite; }
+.marquee-content span { font-weight: 900; font-size: 18px; line-height: 32px; padding-right: 20px; }
+@keyframes marquee-run { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-.marquee-content {
-    display: flex;
-    white-space: nowrap;
-    animation: marquee-run 15s linear infinite;
-    will-change: transform;
-}
-.marquee-content span {
-    font-weight: 900;
-    font-size: 18px;
-    padding-right: 50px;
-}
-
-@keyframes marquee-run {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-/* 首頁元素定位 - 保留你的精確百分比 */
+/* 首頁定位 (保留你的原始比例) */
 .top-green-banner { top: 31px; width: 100%; z-index: 2; }
 .thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
-.cashier-sticker { top: 6.8%; left: 1%; width: 33%; z-index: 25; transform: rotate(-1deg); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
+.cashier-sticker { top: 6.8%; left: 1%; width: 33%; z-index: 25; transform: rotate(-1deg); }
 .main-title-img { top: 26.75%; left: 51.5%; transform: translateX(-50%); width: 90%; z-index: 5; }
 .membership-card-bg { top: 44%; left: 50.75%; transform: translateX(-50%); width: 85%; z-index: 6; }
 .sale-2025-sticker { top: 68.3%; left: 28.5%; width: 33%; z-index: 30; transform: rotate(-4deg); }
 .receipt-paper { bottom: 5%; left: -8%; width: 45%; z-index: 30; }
 .resignation-card { bottom: 6.8%; left: 26.5%; width: 33.5%; z-index: 12; }
 .hot-item-tag { bottom: 11%; right: 2%; width: 40%; z-index: 10; }
+.checkout-btn { position: absolute; bottom: 6%; right: 5%; width: 28%; z-index: 50; cursor: pointer; pointer-events: auto; }
 
-.checkout-btn {
-    position: absolute;
-    bottom: 6%;
-    right: 5%;
-    width: 28%;
-    z-index: 50;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: transform 0.1s;
-}
-.checkout-btn:active { transform: scale(0.92); }
+/* 選單頁面 */
+#menu-view { background: #f4f4f4; flex-direction: column; align-items: center; z-index: 500; }
+.menu-header { text-align: center; padding: 70px 20px 20px; width: 100%; background: #fff; border-bottom: 3px solid var(--wal-red); }
+.market-title { color: var(--wal-blue); font-weight: 900; font-size: 24px; }
+.market-subtitle { font-size: 12px; color: #666; margin-top: 4px; }
+.user-badge { background: var(--wal-blue); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; margin-bottom: 8px; font-size: 12px; }
 
-/* --- 核心改裝：超市選單頁面 --- */
-#menu-view {
-    z-index: 500;
-    background: #f4f4f4; /* 換成超市內部明亮的灰色調 */
-    display: none; /* 由 JS 切換 */
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-    padding-bottom: 50px;
-}
+.menu-grid { display: flex; flex-direction: column; gap: 15px; padding: 20px; width: 100%; }
+.shelf-tag { background: white; border: 1px solid #ddd; display: flex; overflow: hidden; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+.shelf-tag.hot { border-left: 10px solid var(--wal-red); }
+.shelf-tag.clearance { border-left: 10px solid #555; }
+.tag-body { flex: 1; padding: 12px; }
+.tag-main-row { display: flex; justify-content: space-between; align-items: center; }
+.tag-main { font-weight: 900; font-size: 18px; color: var(--wal-blue); }
+.tag-price { font-weight: 900; font-size: 20px; color: var(--wal-red); }
+.tag-desc { font-size: 11px; color: #888; margin-top: 4px; }
 
-.menu-header {
-    text-align: center;
-    padding: 70px 20px 20px;
-    width: 100%;
-}
+/* Modal 與 會員卡修正 */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+.modal-content { background: white; width: 92%; max-width: 360px; padding: 20px; border-radius: 20px; text-align: center; }
+.modal-title { font-weight: 900; color: var(--wal-blue); margin-bottom: 10px; }
 
-.market-title {
-    color: var(--brand-red);
-    font-weight: 900;
-    font-size: 26px;
-    letter-spacing: 1px;
-}
+.preview-card-container { position: relative; width: 100%; aspect-ratio: 1.58 / 1; background: #fff; overflow: hidden; border-radius: 4px; border: 1px solid #eee; }
+.preview-card-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; object-fit: fill; }
 
-.market-subtitle {
-    color: #666;
-    font-size: 13px;
-    margin-top: 5px;
-}
+/* 移除暗角核心樣式 */
+.cr-viewport { box-shadow: 0 0 0 1000px rgba(255, 255, 255, 1) !important; border: 1px dashed var(--wal-blue) !important; }
+.cr-boundary { background: #fff !important; }
 
-/* 貨架標籤設計 */
-.menu-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding: 20px;
-    width: 90%;
-}
+/* 精確鎖定照片與姓名位置 */
+.upload-container-modal { position: absolute; top: 37.5%; left: 10.5%; width: 25.5%; height: 47%; z-index: 10; pointer-events: auto; }
+.upload-zone { width: 100% !important; height: 100% !important; border: 1px dashed #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
+.upload-tip { font-size: 10px; color: #bbb; z-index: 5; pointer-events: none; }
 
-.shelf-tag {
-    background: white;
-    border: 3px solid #333;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    box-shadow: 6px 6px 0px #333;
-    transition: all 0.1s;
-    cursor: pointer;
-}
+.name-input-modal { position: absolute; top: 54%; left: 42%; width: 45%; z-index: 15; display: flex; align-items: center; pointer-events: auto; }
+.modal-label { font-size: 13px; font-weight: 900; color: #333; }
+.name-field-modal { border: none; border-bottom: 2px solid var(--wal-blue); background: transparent; font-size: 14px; font-weight: bold; width: 100%; outline: none; margin-left: 2px; }
 
-.shelf-tag:active {
-    transform: translate(3px, 3px);
-    box-shadow: 0px 0px 0px #333;
-}
-
-.tag-label {
-    position: absolute;
-    top: -12px;
-    left: 10px;
-    background: var(--tag-yellow);
-    color: var(--brand-red);
-    font-weight: 900;
-    font-size: 12px;
-    padding: 2px 8px;
-    border: 2px solid #333;
-    transform: rotate(-2deg);
-}
-
-.tag-content {
-    flex-grow: 1;
-    text-align: left;
-}
-
-.tag-main {
-    display: block;
-    font-weight: 900;
-    font-size: 18px;
-    color: var(--dark-text);
-}
-
-.tag-sub {
-    display: block;
-    font-size: 11px;
-    color: #888;
-    margin-top: 2px;
-}
-
-.tag-price {
-    font-family: 'Courier New', monospace;
-    font-weight: 900;
-    font-size: 22px;
-    color: var(--brand-red);
-    padding-left: 15px;
-    border-left: 1.5px dashed #ddd;
-}
-
-/* 分類色條 */
-.shelf-tag.hot { border-left: 12px solid #ff5722; }
-.shelf-tag.clearance { border-left: 12px solid #795548; }
-
-/* --- Modal 與 辦卡編輯區 --- */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 2000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(8px);
-}
-
-.modal-content {
-    background: white;
-    width: 92%;
-    max-width: 360px;
-    padding: 25px 15px;
-    border-radius: 24px;
-    text-align: center;
-}
-
-.preview-card-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1.58 / 1;
-    margin: 20px 0;
-    overflow: hidden;
-}
-
-/* 確保底圖填滿 */
-.preview-card-bg {
-    position: absolute;
-    inset: -1px;
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
-    z-index: 1;
-    object-fit: fill;
-}
-
-/* 保留你手動調整的照片區尺寸 */
-.upload-container-modal {
-    position: absolute;
-    top: 35.5%;
-    left: 11%;
-    width: 22%;
-    height: 44.5%;
-    z-index: 10;
-}
-
-.upload-zone {
-    width: 100% !important;
-    height: 100% !important;
-    border: 1.5px dashed #ccc;
-    background: #fcfcfc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.name-input-modal {
-    position: absolute;
-    top: 52%;
-    left: 40%;
-    z-index: 15;
-    display: flex;
-    align-items: center;
-    width: 45%;
-}
-
-.name-field-modal {
-    border: none;
-    background: transparent;
-    border-bottom: 1px solid var(--brand-red);
-    font-size: 12px;
-    font-weight: bold;
-    width: 100%;
-    outline: none;
-}
-
-/* Croppie 樣式調整 */
-.cr-boundary { width: 100% !important; height: 100% !important; }
-.cr-viewport { border: 1px solid rgba(255,255,255,0.5) !important; box-shadow: 0 0 0 1000px rgba(0,0,0,0.5) !important; }
-.cr-slider-wrap { display: none !important; }
-
-/* 按鈕樣式 */
-#confirm-generate {
-    background: var(--brand-red);
-    color: white;
-    border: none;
-    padding: 15px;
-    width: 100%;
-    border-radius: 50px;
-    font-weight: 900;
-    cursor: pointer;
-}
+.primary-btn { background: var(--wal-red); color: white; border: none; padding: 12px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+.secondary-btn { background: none; border: none; color: #999; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 13px; }
