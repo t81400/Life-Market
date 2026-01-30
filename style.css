@@ -1,51 +1,16 @@
 :root {
-    --wal-blue: #005596;
-    --wal-red: #e31d3b;
     --market-bg: rgb(217, 131, 164);
+    --brand-red: rgb(203, 19, 45);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background-color: #1a1a1a; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; font-family: -apple-system, sans-serif; }
 
-body {
-    background-color: #1a1a1a;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    font-family: -apple-system, sans-serif;
-}
-
-.app-sandbox {
-    position: relative;
-    height: 90vh;
-    aspect-ratio: 9 / 16;
-    background-color: var(--market-bg);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    overflow: hidden;
-}
-
-.layer-visual, .layer-overlay { position: absolute; inset: 0; }
+.app-sandbox { position: relative; height: 90vh; aspect-ratio: 9 / 16; background-color: var(--market-bg); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8); overflow: hidden; }
+.layer-visual { position: absolute; inset: 0; }
 img { position: absolute; pointer-events: none; }
 
-/* 跑馬燈 */
-.marquee-banner {
-    position: absolute;
-    width: 100%;
-    height: 32px;
-    background-color: var(--wal-red);
-    color: white;
-    overflow: hidden;
-    display: flex;
-    z-index: 1000;
-}
-.marquee-top { top: 0; }
-.marquee-bottom { bottom: 0; }
-.marquee-content { display: flex; white-space: nowrap; animation: marquee-run 15s linear infinite; }
-.marquee-content span { font-weight: 900; font-size: 18px; line-height: 32px; padding-right: 20px; }
-@keyframes marquee-run { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-/* 首頁定位 (保留你的原始比例) */
+/* 首頁定位 */
 .top-green-banner { top: 31px; width: 100%; z-index: 2; }
 .thanks-banner { top: 8%; right: -3.7%; width: 103%; z-index: 3; }
 .cashier-sticker { top: 6.8%; left: 1%; width: 33%; z-index: 25; transform: rotate(-1deg); }
@@ -57,43 +22,65 @@ img { position: absolute; pointer-events: none; }
 .hot-item-tag { bottom: 11%; right: 2%; width: 40%; z-index: 10; }
 .checkout-btn { position: absolute; bottom: 6%; right: 5%; width: 28%; z-index: 50; cursor: pointer; pointer-events: auto; }
 
-/* 選單頁面 */
-#menu-view { background: #f4f4f4; flex-direction: column; align-items: center; z-index: 500; }
-.menu-header { text-align: center; padding: 70px 20px 20px; width: 100%; background: #fff; border-bottom: 3px solid var(--wal-red); }
-.market-title { color: var(--wal-blue); font-weight: 900; font-size: 24px; }
-.market-subtitle { font-size: 12px; color: #666; margin-top: 4px; }
-.user-badge { background: var(--wal-blue); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-block; margin-bottom: 8px; font-size: 12px; }
-
-.menu-grid { display: flex; flex-direction: column; gap: 15px; padding: 20px; width: 100%; }
-.shelf-tag { background: white; border: 1px solid #ddd; display: flex; overflow: hidden; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-.shelf-tag.hot { border-left: 10px solid var(--wal-red); }
-.shelf-tag.clearance { border-left: 10px solid #555; }
-.tag-body { flex: 1; padding: 12px; }
-.tag-main-row { display: flex; justify-content: space-between; align-items: center; }
-.tag-main { font-weight: 900; font-size: 18px; color: var(--wal-blue); }
-.tag-price { font-weight: 900; font-size: 20px; color: var(--wal-red); }
-.tag-desc { font-size: 11px; color: #888; margin-top: 4px; }
-
-/* Modal 與 會員卡修正 */
+/* Modal 核心 */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-.modal-content { background: white; width: 92%; max-width: 360px; padding: 20px; border-radius: 20px; text-align: center; }
-.modal-title { font-weight: 900; color: var(--wal-blue); margin-bottom: 10px; }
+.modal-content { background: white; width: 92%; max-width: 360px; padding: 25px 20px; border-radius: 24px; text-align: center; }
+.modal-title { font-weight: 900; color: #000; margin-bottom: 20px; font-size: 22px; }
 
-.preview-card-container { position: relative; width: 100%; aspect-ratio: 1.58 / 1; background: #fff; overflow: hidden; border-radius: 4px; border: 1px solid #eee; }
+/* 會員卡容器 */
+.preview-card-container { position: relative; width: 100%; aspect-ratio: 1.58 / 1; background: #fff; overflow: hidden; border-radius: 8px; border: 1px solid #eee; }
 .preview-card-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; object-fit: fill; }
 
-/* 移除暗角核心樣式 */
-.cr-viewport { box-shadow: 0 0 0 1000px rgba(255, 255, 255, 1) !important; border: 1px dashed var(--wal-blue) !important; }
+/* 照片框定位修正 */
+.upload-container-modal {
+    position: absolute;
+    top: 35.8%; 
+    left: 11%; 
+    width: 23%;   
+    height: 44.5%;  
+    z-index: 10;
+    pointer-events: auto;
+}
+.upload-zone { width: 100% !important; height: 100% !important; background: #fff; border: 1px dashed #eee; display: flex; align-items: center; justify-content: center; }
+.upload-tip { font-size: 10px; color: #ccc; pointer-events: none; }
+
+/* 姓名框定位修正 (覆蓋紅線) */
+.name-input-modal {
+    position: absolute;
+    top: 50%; 
+    left: 51%;   
+    width: 36%;
+    z-index: 15;
+    pointer-events: auto;
+}
+.name-field-modal {
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: bold;
+    width: 100%;
+    outline: none;
+    color: #000;
+}
+
+/* 移除暗角 */
+.cr-viewport { box-shadow: 0 0 0 1000px rgba(255, 255, 255, 1) !important; border: none !important; }
 .cr-boundary { background: #fff !important; }
 
-/* 精確鎖定照片與姓名位置 */
-.upload-container-modal { position: absolute; top: 37.5%; left: 10.5%; width: 25.5%; height: 47%; z-index: 10; pointer-events: auto; }
-.upload-zone { width: 100% !important; height: 100% !important; border: 1px dashed #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
-.upload-tip { font-size: 10px; color: #bbb; z-index: 5; pointer-events: none; }
+/* 按鈕風格 */
+.primary-btn { background: var(--brand-red); color: white; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+.secondary-btn { background: none; border: none; color: #999; margin-top: 12px; cursor: pointer; text-decoration: underline; font-size: 14px; }
 
-.name-input-modal { position: absolute; top: 54%; left: 42%; width: 45%; z-index: 15; display: flex; align-items: center; pointer-events: auto; }
-.modal-label { font-size: 13px; font-weight: 900; color: #333; }
-.name-field-modal { border: none; border-bottom: 2px solid var(--wal-blue); background: transparent; font-size: 14px; font-weight: bold; width: 100%; outline: none; margin-left: 2px; }
-
-.primary-btn { background: var(--wal-red); color: white; border: none; padding: 12px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 15px; }
-.secondary-btn { background: none; border: none; color: #999; margin-top: 10px; cursor: pointer; text-decoration: underline; font-size: 13px; }
+/* 選單風格 */
+#menu-view { background: var(--market-bg); flex-direction: column; align-items: center; }
+.menu-header { text-align: center; padding: 80px 20px 30px; color: white; width: 100%; }
+.market-title { font-weight: 900; font-size: 26px; }
+.user-badge { background: white; color: var(--brand-red); padding: 8px 20px; border-radius: 50px; font-weight: 900; display: inline-block; cursor: pointer; margin-bottom: 10px; }
+.shelf-tag { background: white; border-radius: 4px; display: flex; align-items: center; padding: 15px; width: 90%; margin: 10px auto; border: 1px solid #ddd; position: relative; cursor: pointer;}
+.shelf-tag.hot { border-left: 10px solid #e67e22; }
+.shelf-tag.clearance { border-left: 10px solid #555; }
+.tag-label { background: #f1c40f; padding: 2px 8px; font-size: 10px; font-weight: 900; position: absolute; top: -10px; left: 10px; }
+.tag-content { flex: 1; text-align: left; }
+.tag-main { font-weight: 900; color: #333; font-size: 18px; display: block; }
+.tag-sub { font-size: 11px; color: #888; }
+.tag-price { font-weight: 900; color: var(--brand-red); font-size: 20px; }
